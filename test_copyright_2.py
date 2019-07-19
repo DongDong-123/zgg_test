@@ -10,26 +10,6 @@ from front_login import *
 from readConfig import ReadConfig
 from copy import deepcopy
 
-# alread = ["copyright_computer_software_05", "patent_evaluate_utility", "copyright_compilation_02",
-#           "trademark_brand_extension_01", "copyright_movie_works_01", "copyright_photography_05",
-#           "trademark_prove_brand", "patent_pledge", "patent_oneday_normal", "trademark_reissue_brand",
-#           "trademark_germany_brand", "copyright_computer_software_03", "taocan_design_package", "copyright_writings_01",
-#           "copyright_music_works_03", "trademark_brand_revoke_apply", "trademark_group_brand", "trademark_prove_brand",
-#           "patent_examine_invention", "trademark_brand_litigation", "trademark_brand_cancel", "patent_stable_utility",
-#           "copyright_music_works_05", "patent_review_design", "trademark_guarantee_register", "copyright_quyi_works_01",
-#           "copyright_movie_works_04", "trademark_ordinary_reject", "patent_review_utility", "copyright_quyi_works_05",
-#           "patent_evaluate_utility", "trademark_germany_brand", "patent_oneday_expert", "trademark_brand_extension_03",
-#           "copyright_computer_software_04", "copyright_writings_05", "taocan_review_package",
-#           "trademark_objection_answer", "copyright_writings_06", "trademark_urgent_register",
-#           "copyright_movie_works_01", "patent_warrant_invention", "trademark_brand_permit", "copyright_compilation_05",
-#           "patent_warrant_utility", "patent_oneday_expert_guarantee", "copyright_computer_software_01",
-#           "trademark_EU_brand", "copyright_photography_06", "copyright_computer_software_06", "patent_replace",
-#           "copyright_writings_04", "trademark_brand_permit_02", "trademark_korea_brand", "trademark_madrid_brand",
-#           "patent_permit", "highnew_enterprise_standard", "copyright_music_works_02", "trademark_brand_amend",
-#           "patent_public_need", "trademark_brand_revoke_answer", "trademark_objection_apply", "patent_circuit",
-#           "patent_stable_invention","trademark_brand_revoke_apply","trademark_brand_assignment_01","patent_clue_global","patent_recovery","trademark_brand_extension_02","copyright_compilation_05","copyright_art_works_06","trademark_brand_invalid_answer","copyright_photography_05","patent_public_need","copyright_movie_works_06","patent_evaluate_utility","trademark_brand_extension_03","copyright_art_works_01","highnew_enterprise_standard","copyright_music_works_05","trademark_brand_cancel","trademark_famous_brand","patent_stable_design","copyright_quyi_works_01","copyright_compilation_04","copyright_compilation_02","copyright_writings_01","copyright_movie_works_01","trademark_africa_knowledge","trademark_brand_permit","patent_review_utility","patent_clue_domestic","patent_stable_invention","patent_examine_invention","copyright_quyi_works_04","copyright_writings_06","trademark_double_register","copyright_quyi_works_05","trademark_group_brand","trademark_brand_litigation","patent_oneday_expert_urgent","copyright_computer_software_04","trademark_double_reject","copyright_art_works_04","copyright_music_works_06","trademark_urgent_register","copyright_photography_04","copyright_compilation_06","copyright_quyi_works_06","patent_evaluate_design","copyright_computer_software_05","patent_online_retailers","patent_warrant_design","patent_replace","patent_examine_utility","trademark_objection_noregistration","trademark_germany_brand","patent_pledge","copyright_music_works_02","copyright_compilation_01","trademark_prove_brand","patent_circuit","copyright_writings_02","patent_examine_design","copyright_computer_software_02","patent_public_noneed","highnew_enterprise_guarantee","patent_oneday_expert"]
-
-
 class FunctionName(type):
     def __new__(cls, name, bases, attrs, *args, **kwargs):
         count = 0

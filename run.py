@@ -1,7 +1,7 @@
 
 
 # test
-# from test_copyright import Execute
+from test_copyright import Execute
 # from test_patent import Execute
 # from test_trademarkt import Execute
 # from test_one import Execute
@@ -17,7 +17,7 @@ class Operate:
 
     def create(self):
         # from New_place_order import Execute
-        from test_one import Execute
+        # from test_one import Execute
 
         response = Execute()
 
@@ -51,13 +51,31 @@ class Operate:
             self.execute_log(callback, "send_clue")
             time.sleep(1)
             print("{}发送完毕".format(callback))
+            time.sleep(5)
 
+    def delete(self):
+        from New_place_order import Execute
+        test = Execute()
+        for i in range(100):
+            test.delete_order()
 def run():
     qq = Operate()
     qq.create()
-    # print("线索发送完毕")
+    print("下单完毕")
+    print("线索发送完毕")
     # qq.send_clue()
 
+def send_clue():
+    qq = Operate()
+    qq.send_clue()
+    print("线索发送完毕")
+
+def delete():
+    qq = Operate()
+    qq.delete()
+    print("删除完毕")
 
 if __name__ == '__main__':
     run()
+    # send_clue()
+    # delete()

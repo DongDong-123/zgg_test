@@ -41,7 +41,27 @@ class FunctionName(type):
     def get_count(cls):
         pass
 
+
 # class Delete_case:
+
+alread = ["copyright_computer_software_05", "patent_evaluate_utility", "copyright_compilation_02",
+          "trademark_brand_extension_01", "copyright_movie_works_01", "copyright_photography_05",
+          "trademark_prove_brand", "patent_pledge", "patent_oneday_normal", "trademark_reissue_brand",
+          "trademark_germany_brand", "copyright_computer_software_03", "taocan_design_package", "copyright_writings_01",
+          "copyright_music_works_03", "trademark_brand_revoke_apply", "trademark_group_brand", "trademark_prove_brand",
+          "patent_examine_invention", "trademark_brand_litigation", "trademark_brand_cancel", "patent_stable_utility",
+          "copyright_music_works_05", "patent_review_design", "trademark_guarantee_register", "copyright_quyi_works_01",
+          "copyright_movie_works_04", "trademark_ordinary_reject", "patent_review_utility", "copyright_quyi_works_05",
+          "patent_evaluate_utility", "trademark_germany_brand", "patent_oneday_expert", "trademark_brand_extension_03",
+          "copyright_computer_software_04", "copyright_writings_05", "taocan_review_package",
+          "trademark_objection_answer", "copyright_writings_06", "trademark_urgent_register",
+          "copyright_movie_works_01", "patent_warrant_invention", "trademark_brand_permit", "copyright_compilation_05",
+          "patent_warrant_utility", "patent_oneday_expert_guarantee", "copyright_computer_software_01",
+          "trademark_EU_brand", "copyright_photography_06", "copyright_computer_software_06", "patent_replace",
+          "copyright_writings_04", "trademark_brand_permit_02", "trademark_korea_brand", "trademark_madrid_brand",
+          "patent_permit", "highnew_enterprise_standard", "copyright_music_works_02", "trademark_brand_amend",
+          "patent_public_need", "trademark_brand_revoke_answer", "trademark_objection_apply", "patent_circuit",
+          "patent_stable_invention"]
 
 
 class Execute(object, metaclass=FunctionName):
@@ -60,7 +80,7 @@ class Execute(object, metaclass=FunctionName):
         self.number = 1
         self.report_path = ReadConfig().save_report()
         self.case_count = FunctionName.get_count
-        self.file_name = self.excel_number(("案件名称", "案件号", "详情页价格", "下单页价格","下单页总价格", "支付页总价格","价格状态"))
+        self.file_name = self.excel_number(("案件名称", "案件号", "详情页价格", "下单页价格", "下单页总价格", "支付页总价格", "价格状态"))
 
     # 增加案件数量
     def number_add(self):
@@ -83,8 +103,8 @@ class Execute(object, metaclass=FunctionName):
             time.sleep(0.5)
             pay_totalPrice = self.pay(back_parm)
             all_info.append(pay_totalPrice)
-            print(all_info,pay_totalPrice)
-            if float(all_info[2]) == float(all_info[3]) and float(all_info[2]) == float(pay_totalPrice) and\
+            print(all_info, pay_totalPrice)
+            if float(all_info[2]) == float(all_info[3]) and float(all_info[2]) == float(pay_totalPrice) and \
                     float(all_info[4]) == float(all_info[2]):
                 status = 'True'
             else:
@@ -204,39 +224,43 @@ class Execute(object, metaclass=FunctionName):
             path = os.path.join(self.report_path, "report_{}.xls".format(self.timetemp))
             self.workbook.save(path)
 
-    #
-
-    # 1 发明专利-标准服务
-    def patent_invention_normal(self):
+    # 57 专属担保注册
+    def trademark_guarantee_register(self):
         # 选择发明专利
-        locator = (By.XPATH, "(.//div[@class='fl isnaMar'])[1]")
+        locator = (By.XPATH, "(.//div[@class='fl isnaMar'])[2]")
         WebDriverWait(self.driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
-        aa = self.driver.find_element_by_xpath("(.//div[@class='fl isnaMar'])[1]")
+        aa = self.driver.find_element_by_xpath("(.//div[@class='fl isnaMar'])[2]")
         ActionChains(self.driver).move_to_element(aa).perform()
-        self.driver.find_element_by_link_text(u'发明专利').click()
+        self.driver.find_element_by_link_text(u'专属担保注册').click()
         # 切换至新窗口
         windows = self.driver.window_handles
         self.driver.switch_to_window(windows[-1])
-
-        # 判断价格是否加载成功
-        while not self.driver.find_element_by_id("totalfee").is_displayed():
-            time.sleep(0.5)
-        # 获取详情页 价格
-        detail_price = self.driver.find_element_by_xpath("(.//div[@class='sames']//label[@id='totalfee'])").text
-        print("详情页价格", detail_price)
         # 服务类型选择
         # self.driver.find_element_by_xpath(".//li[@class='focr1 selected']/a").click()
 
         # 增值服务类型选择
         # self.driver.find_element_by_xpath("(.//li[@t=1]/a)[2]").click()
 
-        # 数量加1
-        # self.number_add()
-        # 数量减1
-        # # self.number_minus()
-
         self.apply_now()
-        # 获取下单页价格
-        case_name, case_number, case_price, totalPrice = self.commit_order()
+        # 切换至选择商标分类页面
+        windows = self.driver.window_handles
+        self.driver.switch_to_window(windows[-1])
+        num = random.randint(1, 45)
+        num = 35
+        time.sleep(2)
+        target = self.driver.find_element_by_xpath(".//ul[@class='statuslist']/li[{}]".format(num))
+        self.driver.execute_script("arguments[0].scrollIntoView();", target)
+        self.driver.find_element_by_xpath(".//ul[@class='statuslist']/li[45]").click()
+        time.sleep(0.5)
+        while not self.driver.find_element_by_id("costesNum").is_displayed():
+            time.sleep(0.5)
+        # 获取详情页 价格
+        # detail_price = self.driver.find_element_by_xpath("(.//div[@class='info-checkedtop']/p/span)").text
+        detail_price = self.driver.find_element_by_xpath("(.//div[@class='bottomin']/p[1]/span)").text
+        # print("商标页价格", total_price)
+        detail_price = self.process_price(detail_price)
+        print("详情页价格", detail_price)
 
-        return windows, [case_name, case_number,detail_price, case_price, totalPrice]
+        self.driver.find_element_by_xpath("//div[@id='bottombg']/div/span").click()
+        case_name, case_number, case_price, totalPrice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalPrice]

@@ -13,6 +13,8 @@ driver = webdriver.Chrome()
 driver.maximize_window()
 driver.get(ReadConfig().get_root_url())
 
+alread_send = ["patent_clue_33","patent_clue_32","patent_clue_19","patent_clue_12","patent_clue_11","patent_clue_05","patent_clue_13","patent_clue_21","patent_clue_25","patent_clue_09","patent_clue_22","patent_clue_36","patent_clue_04","patent_clue_07","patent_clue_27","patent_clue_06","patent_clue_01","patent_clue_02","patent_clue_34"]
+
 
 class FunctionName(type):
     def __new__(cls, name, bases, attrs, *args, **kwargs):
@@ -67,21 +69,22 @@ class Execute(object, metaclass=FunctionName):
         self.file_name = self.save_clue_log(("手机号", "线索内容", "发送状态", "其他"))
 
     def execute_function(self, callback):
-        try:
-            back_parm = eval("self.{}()".format(callback))
-            # self.save_clue_log(eval("self.{}()".format(callback)))
-            # for elem in eval("self.{}()".format(callback)):
-            #     print("elem:", elem)
-            self.row = self.row + 1
-            self.save_clue_log(back_parm)
-            # time.sleep(0.5)
-            time.sleep(0.5)
+        if callback not in alread_send:
+            try:
+                back_parm = eval("self.{}()".format(callback))
+                # self.save_clue_log(eval("self.{}()".format(callback)))
+                # for elem in eval("self.{}()".format(callback)):
+                #     print("elem:", elem)
+                self.row = self.row + 1
+                self.save_clue_log(back_parm)
+                # time.sleep(0.5)
+                time.sleep(0.5)
 
-        except Exception as e:
-            print("错误信息:", e)
-            self.write_error_log(callback)
-            time.sleep(0.5)
-            self.write_error_log(str(e))
+            except Exception as e:
+                print("错误信息:", e)
+                self.write_error_log(callback)
+                time.sleep(0.5)
+                self.write_error_log(str(e))
 
     def write_error_log(self, info):
         error_log_path = os.path.join(self.report_path,
@@ -922,11 +925,11 @@ class Execute(object, metaclass=FunctionName):
         type_num = nation_type["{}".format(num)]
         self.driver.find_element_by_xpath("(.//li[@pt='{}'])".format(random.choice(type_num))).click()
         time.sleep(0.5)
-
+        name = self.driver.find_element_by_xpath("(.//li[@pt='{}'])".format(random.choice(type_num))).text
         # 输入联系方式/联系人
         case_name = self.driver.find_element_by_xpath("(.//div[@class='ui-apply-tit']//h3)").text
         self.driver.find_element_by_id("consult_phone").send_keys(self.phone)
-        self.driver.find_element_by_id("consult_contact").send_keys(case_name + "-" + nation)
+        self.driver.find_element_by_id("consult_contact").send_keys(case_name + "-" + nation + "-"+ name)
 
         # 提交需求
         self.driver.find_element_by_xpath("(.//div[@class='ui-zlsq-gwc']/a)[1]").click()
