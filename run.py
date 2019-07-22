@@ -1,7 +1,7 @@
 
 
 # test
-from test_copyright import Execute
+from copyright import Execute
 # from test_patent import Execute
 # from test_trademarkt import Execute
 # from test_one import Execute
@@ -54,9 +54,10 @@ class Operate:
             time.sleep(5)
 
     def delete(self):
-        from New_place_order import Execute
+        # from New_place_order import Execute
         test = Execute()
-        for i in range(100):
+        num = test.get_code_num()
+        for i in range(num):
             test.delete_order()
 def run():
     qq = Operate()
@@ -76,6 +77,6 @@ def delete():
     print("删除完毕")
 
 if __name__ == '__main__':
-    run()
+    # run()
     # send_clue()
-    # delete()
+    delete()

@@ -10,6 +10,7 @@ from front_login import *
 from readConfig import ReadConfig
 from copy import deepcopy
 
+
 class FunctionName(type):
     def __new__(cls, name, bases, attrs, *args, **kwargs):
         count = 0
@@ -76,12 +77,8 @@ class Execute(object, metaclass=FunctionName):
 
     # 执行下单
     def execute_function(self, callback):
-        # if callback not in alread:
-        # for num in range(1, 7):
         try:
-            back_parm, all_info = eval("self.{}()".format(callback))
-
-            # self.closed_windows()
+            eval("self.{}()".format(callback))
         except Exception as e:
             print("错误信息:", e)
             self.write_error_log(callback)
@@ -133,9 +130,13 @@ class Execute(object, metaclass=FunctionName):
         self.driver.close()
         self.driver.switch_to_window(windows[num])
 
+    def get_code_num(self):
+        self.driver.get("{}/user/casemanage.html?state=1".format(ReadConfig().get_user_url()))
+        num = self.driver.find_element_by_xpath("//div[@class='fl']/a[2]/span").text
+        return int(num)
+
     # 删除未支付订单
     def delete_order(self):
-        self.driver.get("{}/user/casemanage.html?state=1".format(ReadConfig().get_user_url()))
         locator = (By.LINK_TEXT, u'删除')
         # 等待页面加载完毕
         WebDriverWait(self.driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
@@ -186,23 +187,25 @@ class Execute(object, metaclass=FunctionName):
             path = os.path.join(self.report_path, "report_{}.xls".format(self.timetemp))
             self.workbook.save(path)
 
-    def copyright_computer_software_01(self):
-        # 选择计算机软件著作权登记
-        locator = (By.XPATH, "//div[@class='isnav-first']/div[1]/h2")
-        WebDriverWait(self.driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
-        aa = self.driver.find_element_by_xpath("(.//div[@class='fl isnaMar'])[3]")
-        ActionChains(self.driver).move_to_element(aa).perform()
-        self.driver.find_element_by_link_text(u'计算机软件著作权登记').click()
-        # 切换至新窗口
-        windows = self.driver.window_handles
-        self.driver.switch_to_window(windows[-1])
-        # 服务类型：
-        # 1-6，36个工作日-3个工作日
-        for num in range(1, 3):
-            self.driver.find_element_by_xpath("//ul[@p='232']/li[{}]/a".format(num)).click()
-            # 数量加减
-            # self.number_add()
-            # self.number_minus()
+    # 国际商标注册
+    def trademark_international(self):
+        all_type = [u'美国商标注册', u'日本商标注册',u'韩国商标注册', u'台湾商标注册', u'香港商标注册', u'德国商标注册',
+                    u'欧盟商标注册',u'马德里国际商标', u'非洲知识产权组织']
+        for international_type in all_type:
+            locator = (By.XPATH, "//div[@class='isnav-first']/div[1]/h2")
+            WebDriverWait(self.driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
+            aa = self.driver.find_element_by_xpath("(.//div[@class='fl isnaMar'])[2]")
+            ActionChains(self.driver).move_to_element(aa).perform()
+            self.driver.find_element_by_link_text(international_type).click()
+            # 切换至新窗口
+            windows = self.driver.window_handles
+            self.driver.switch_to_window(windows[-1])
+            # 商标分类
+            self.driver.find_element_by_xpath("//a[@class='theme-fl']").click()
+            time.sleep(0.5)
+            self.driver.find_element_by_xpath("//ul[@class='theme-ul']/li[1]/p").click()
+            sleep(0.5)
+            self.driver.find_element_by_xpath("//div[@class='theme-btn']/a[3]").click()
             time.sleep(0.5)
             while not self.driver.find_element_by_id("totalfee").is_displayed():
                 time.sleep(0.5)
@@ -212,7 +215,7 @@ class Execute(object, metaclass=FunctionName):
 
             self.apply_now()
             case_name, case_number, case_price, totalPrice = self.commit_order()
-            # yield windows, [case_name, case_number, detail_price, case_price, totalPrice]
+            # return windows, [case_name, case_number, detail_price, case_price, totalPrice]
             all_info = [case_name, case_number, detail_price, case_price, totalPrice]
             self.row = self.row + 1
             time.sleep(0.5)
@@ -232,24 +235,80 @@ class Execute(object, metaclass=FunctionName):
             self.driver.back()
             self.closed_windows(1)
         self.closed_windows(0)
+        time.sleep(1)
 
+    # 国内商标
+    def trademark_adviser_register(self):
+        all_type = [u'专属顾问注册', u'专属加急注册', u'专属双享注册', u'专属担保注册']
+        for trademark_type in all_type:
+            locator = (By.XPATH, "(.//div[@class='fl isnaMar'])[2]")
+            WebDriverWait(self.driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
+            aa = self.driver.find_element_by_xpath("(.//div[@class='fl isnaMar'])[2]")
+            ActionChains(self.driver).move_to_element(aa).perform()
+            self.driver.find_element_by_link_text(trademark_type).click()
+            # 切换至新窗口
+            windows = self.driver.window_handles
+            self.driver.switch_to_window(windows[-1])
 
-    # 99 美术作品著作权登记-30日
-    def copyright_art_works_01(self):
-        # 选择美术作品著作权登记
+            self.apply_now()
+            # 切换至选择商标分类页面
+            windows = self.driver.window_handles
+            self.driver.switch_to_window(windows[-1])
+            num = random.randint(1, 45)
+            # num = 35
+            time.sleep(1)
+            target = self.driver.find_element_by_xpath(".//ul[@class='statuslist']/li[{}]".format(num))
+            self.driver.execute_script("arguments[0].scrollIntoView();", target)
+            self.driver.find_element_by_xpath(".//ul[@class='statuslist']/li[{}]".format(num)).click()
+
+            time.sleep(0.5)
+            while not self.driver.find_element_by_id("costesNum").is_displayed():
+                time.sleep(0.5)
+            # 获取详情页 价格
+            # detail_price = self.driver.find_element_by_xpath("(.//div[@class='info-checkedtop']/p/span)").text
+            detail_price = self.driver.find_element_by_xpath("(.//div[@class='bottomin']/p[1]/span)").text
+            # print("商标页价格", total_price)
+            detail_price = self.process_price(detail_price)
+
+            print("详情页价格", detail_price)
+            self.driver.find_element_by_xpath("//div[@id='bottombg']/div/span").click()
+
+            case_name, case_number, case_price, totalPrice = self.commit_order()
+            # return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+            all_info = [case_name, case_number, detail_price, case_price, totalPrice]
+            self.row = self.row + 1
+            time.sleep(0.5)
+            pay_totalPrice = self.pay(windows)
+            all_info.append(pay_totalPrice)
+            print(all_info, pay_totalPrice)
+            if float(all_info[2]) == float(all_info[3]) and float(all_info[2]) == float(pay_totalPrice) and \
+                    float(all_info[4]) == float(all_info[2]):
+                status = 'True'
+            else:
+                status = "False"
+            all_info.append(status)
+            self.excel_number(all_info)
+            time.sleep(1)
+            self.driver.back()
+            self.driver.back()
+            self.driver.back()
+            self.closed_windows(1)
+        self.closed_windows(0)
+        time.sleep(1)
+
+    # 70 商标驳回复审-普通，双保
+    def trademark_ordinary_reject(self):
         locator = (By.XPATH, "//div[@class='isnav-first']/div[1]/h2")
         WebDriverWait(self.driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
-        aa = self.driver.find_element_by_xpath("(.//div[@class='fl isnaMar'])[3]")
+        aa = self.driver.find_element_by_xpath("(.//div[@class='fl isnaMar'])[2]")
         ActionChains(self.driver).move_to_element(aa).perform()
-        self.driver.find_element_by_link_text(u'美术作品著作权登记').click()
+        self.driver.find_element_by_link_text(u'商标驳回复审').click()
         # 切换至新窗口
         windows = self.driver.window_handles
         self.driver.switch_to_window(windows[-1])
-        # 服务类型：
-        # 30个工作日
+        # 服务类型
         for num in range(1, 3):
-            self.driver.find_element_by_xpath("//ul[@p='107538']/li[{}]/a".format(num)).click()
-
+            self.driver.find_element_by_xpath(".//ul[@id='ulType']/li[{}]".format(num)).click()
             # 数量加减
             # self.number_add()
             # # self.number_minus()
@@ -263,7 +322,6 @@ class Execute(object, metaclass=FunctionName):
             self.apply_now()
             case_name, case_number, case_price, totalPrice = self.commit_order()
             # return windows, [case_name, case_number, detail_price, case_price, totalPrice]
-
             all_info = [case_name, case_number, detail_price, case_price, totalPrice]
             self.row = self.row + 1
             time.sleep(0.5)
@@ -283,25 +341,24 @@ class Execute(object, metaclass=FunctionName):
             self.driver.back()
             self.closed_windows(1)
         self.closed_windows(0)
+        time.sleep(1)
 
-    # 105 文字作品著作权登记-30日
-    def copyright_writings_01(self):
-        # 选择文字作品著作权登记
+    # 商标异议 （异议申请、异议答辩）
+    def trademark_objection_apply(self):
         locator = (By.XPATH, "//div[@class='isnav-first']/div[1]/h2")
         WebDriverWait(self.driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
-        aa = self.driver.find_element_by_xpath("(.//div[@class='fl isnaMar'])[3]")
+        aa = self.driver.find_element_by_xpath("(.//div[@class='fl isnaMar'])[2]")
         ActionChains(self.driver).move_to_element(aa).perform()
-        self.driver.find_element_by_link_text(u'文字作品著作权登记').click()
+        self.driver.find_element_by_link_text(u'商标异议').click()
         # 切换至新窗口
         windows = self.driver.window_handles
         self.driver.switch_to_window(windows[-1])
-        # 案件类型：
-        for num in range(1, 7):
-            self.driver.find_element_by_xpath("//ul[@id='ulType']/li[{}]/a".format(num)).click()
+        # 业务方向:异议申请、异议答辩、不予注册复审
+        for num in [22721, 22722]:
+            self.driver.find_element_by_xpath("//li[@pt='{}']/a".format(num)).click()
             # 数量加减
             # self.number_add()
             # # self.number_minus()
-            time.sleep(0.5)
             while not self.driver.find_element_by_id("totalfee").is_displayed():
                 time.sleep(0.5)
             # 获取详情页 价格
@@ -310,8 +367,6 @@ class Execute(object, metaclass=FunctionName):
 
             self.apply_now()
             case_name, case_number, case_price, totalPrice = self.commit_order()
-            # return windows, [case_name, case_number, detail_price, case_price, totalPrice]
-
             all_info = [case_name, case_number, detail_price, case_price, totalPrice]
             self.row = self.row + 1
             time.sleep(0.5)
@@ -330,6 +385,5 @@ class Execute(object, metaclass=FunctionName):
             self.driver.back()
             self.driver.back()
             self.closed_windows(1)
-
         self.closed_windows(0)
-
+        time.sleep(1)
