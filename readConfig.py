@@ -1,15 +1,15 @@
 import configparser
 import os
 
-
 curPath = os.path.dirname(os.path.realpath(__file__))
 cfgPath = os.path.join(curPath, "config.ini")
+print(cfgPath)
 
 
 class ReadConfig:
     def __init__(self):
         self.cfg = configparser.ConfigParser()
-        self.cfg.read(cfgPath)
+        self.cfg.read(cfgPath, encoding='utf-8')
 
     def get_user(self):
         return self.cfg.get("account", "USER")
@@ -26,8 +26,17 @@ class ReadConfig:
     def get_user_url(self):
         return self.cfg.get("URL", "USER_URL")
 
+    def redis_host(self):
+        return self.cfg.get("REDIS", "HOST")
+
+    def redis_password(self):
+        return self.cfg.get("REDIS", "PASSWORD")
+
+    def get_trademake_type(self):
+        return self.cfg.get("TRADEMARK", "trademark_international")
+
 
 if __name__ == "__main__":
     res = ReadConfig()
-    print(res.get_user())
-    print(res.get_password())
+    print(res.redis_host())
+    print(res.redis_password())
