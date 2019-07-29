@@ -3,7 +3,6 @@ import os
 
 curPath = os.path.dirname(os.path.realpath(__file__))
 cfgPath = os.path.join(curPath, "config.ini")
-print(cfgPath)
 
 
 class ReadConfig:
