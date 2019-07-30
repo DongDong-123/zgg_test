@@ -1,8 +1,8 @@
 
 
 # test
-from copyright import Execute
-# from test_patent import Execute
+# from copyright import Execute
+from test_patent import Execute
 # from test_trademarkt import Execute
 # from test_one import Execute
 #
@@ -11,14 +11,21 @@ from copyright import Execute
 import os
 import time
 from readConfig import ReadConfig
+from db import DbOperate
+import random
 
 
 class Operate:
+    # def __init__(self):
+    #     self.dboperate = DbOperate()
 
     def create(self):
         # from New_place_order import Execute
         # from test_one import Execute
-
+        # from test_point import Execute
+        # from trademark import Execute
+        from copyright import Execute
+        # self.dboperate.add(ReadConfig().get_trademake_type())
         response = Execute()
 
         for callback_label in range(response.__FuncCount__):
@@ -41,8 +48,9 @@ class Operate:
             f.read()
 
     def send_clue(self):
-        from send_clue import Execute
-        # from test_clue import Execute
+        # from send_clue import Execute
+        from test_clue import Execute
+
         response = Execute()
         for callback_label in range(response.__FuncCount__):
             callback = response.__Func__[callback_label]
@@ -54,29 +62,45 @@ class Operate:
             time.sleep(5)
 
     def delete(self):
-        # from New_place_order import Execute
+        from New_place_order import Execute
         test = Execute()
         num = test.get_code_num()
         for i in range(num):
             test.delete_order()
+
+
+def random_list(num, lis):
+    res = []
+    for num in range(num):
+        index = random.randint(34)
+        res.append(lis[index])
+    return res
+
+
 def run():
     qq = Operate()
     qq.create()
     print("下单完毕")
-    print("线索发送完毕")
-    # qq.send_clue()
+
 
 def send_clue():
+    all_type = ReadConfig().get_clue_type()
+    # 随机数量
+    num = 5
+    all_type = random_list(num, all_type)
+    DbOperate().add("clue", all_type)
     qq = Operate()
     qq.send_clue()
     print("线索发送完毕")
+
 
 def delete():
     qq = Operate()
     qq.delete()
     print("删除完毕")
 
+
 if __name__ == '__main__':
     # run()
-    # send_clue()
-    delete()
+    send_clue()
+    # delete()

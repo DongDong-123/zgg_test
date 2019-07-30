@@ -34,6 +34,17 @@ class ReadConfig:
     def get_trademake_type(self):
         return self.cfg.get("TRADEMARK", "trademark_international")
 
+    def get_clue_type(self):
+        clue_1_1 = self.cfg.get("CLUE", "clue_1_1")
+        clue_1_2 = self.cfg.get("CLUE", "clue_1_2")
+        clue_1_3 = self.cfg.get("CLUE", "clue_1_3")
+        clue_1_4 = self.cfg.get("CLUE", "clue_1_4")
+        clue_2 = self.cfg.get("CLUE", "clue_2")
+        clue_5 = self.cfg.get("CLUE", "clue_5")
+        clue_5_1 = self.cfg.get("CLUE", "clue_5_1")
+        all_clue_type = eval(clue_1_1)+eval(clue_1_2)+eval(clue_1_3)+eval(clue_1_4)+eval(clue_2)+eval(clue_5)+eval(clue_5_1)
+        return all_clue_type
+
 
 if __name__ == "__main__":
     res = ReadConfig()

@@ -239,31 +239,122 @@ class Execute(object, metaclass=FunctionName):
                 self.row = self.row + 1
                 self.save_clue_log(back_parm)
 
+    # 海外国家专利申请-其他国家
+    def patent_clue_1_4_1(self):
+        clue_type = u'海外国家专利申请-其他国家'
+        if self.dboperate.is_member(self.db, clue_type):
+            locator = (By.XPATH, "(.//div[@class='fl isnaMar'])[2]")
+            WebDriverWait(self.driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
+            aa = self.driver.find_element_by_xpath("(.//div[@class='fl isnaMar'])[1]")
+            ActionChains(self.driver).move_to_element(aa).perform()
+            self.driver.find_element_by_link_text(u'海外国家专利申请').click()
+            # 切换至新窗口
+            windows = self.driver.window_handles
+            self.driver.switch_to_window(windows[-1])
+
+            # 选择国家，范围 1-6
+            self.driver.find_element_by_xpath("(.//li[@origin='92'])").click()
+            time.sleep(0.5)
+            # 选择类型范围  1：71-72；2:81-82；3:91-93;4:101-103;5:111-113;6:121-122
+            # self.driver.find_element_by_xpath("(.//li[@pt='71'])").click()
+            # time.sleep(0.5)
+
+            # 输入联系方式/联系人
+            case_name = self.driver.find_element_by_xpath("(.//div[@class='ui-apply-tit']//h3)").text
+            self.driver.find_element_by_id("consult_phone").send_keys(self.phone)
+            self.driver.find_element_by_id("consult_contact").send_keys(case_name)
+
+            # 提交需求
+            self.driver.find_element_by_xpath("(.//div[@class='ui-zlsq-gwc']/a)[1]").click()
+            time.sleep(0.5)
+            # 判断是否成功推送
+            res = self.check_rasult()
+            self.driver.find_element_by_link_text(u'确定').click()
+            self.driver.close()
+            self.driver.switch_to_window(windows[0])
+            self.dboperate.del_elem(self.db, clue_type)
+            back_parm = (self.phone, case_name, res)
+            self.row = self.row + 1
+            self.save_clue_log(back_parm)
+
+    # 海外国家专利申请
+    def patent_clue_1_4_2(self):
+        clue_type = u'海外国家专利申请'
+        if self.dboperate.is_member(self.db, clue_type):
+            locator = (By.XPATH, "(.//div[@class='fl isnaMar'])[2]")
+            WebDriverWait(self.driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
+            aa = self.driver.find_element_by_xpath("(.//div[@class='fl isnaMar'])[1]")
+            ActionChains(self.driver).move_to_element(aa).perform()
+            self.driver.find_element_by_link_text(u'海外国家专利申请').click()
+            # 切换至新窗口
+            windows = self.driver.window_handles
+            self.driver.switch_to_window(windows[-1])
+
+            # 随机选择一个国家
+            num = random.randint(1, 6)
+            print(num)
+            self.driver.find_element_by_xpath("(.//li[@t='{}'])".format(num)).click()
+            nation = self.driver.find_element_by_xpath("(.//li[@t='{}'])".format(num)).text
+            time.sleep(0.5)
+            # 选择类型 1：71-72；2:81-82；3:91-93;4:101-103;5:111-113;6:121-122
+            nation_type = {}
+            nation_type.update({
+                "1": [71, 72], "2": [81, 82], "3": [91, 92, 93], "4": [101, 102, 103], "5": [111, 112, 113],
+                "6": [121, 122]})
+            # 随机选择一个业务类型
+            type_num = nation_type["{}".format(num)]
+            self.driver.find_element_by_xpath("(.//li[@pt='{}'])".format(random.choice(type_num))).click()
+            time.sleep(0.5)
+            name = self.driver.find_element_by_xpath("(.//li[@pt='{}'])".format(random.choice(type_num))).text
+            # 输入联系方式/联系人
+            case_name = self.driver.find_element_by_xpath("(.//div[@class='ui-apply-tit']//h3)").text
+            self.driver.find_element_by_id("consult_phone").send_keys(self.phone)
+            self.driver.find_element_by_id("consult_contact").send_keys(case_name + "-" + nation + "-" + name)
+
+            # 提交需求
+            self.driver.find_element_by_xpath("(.//div[@class='ui-zlsq-gwc']/a)[1]").click()
+            time.sleep(0.5)
+            # 判断是否成功推送
+            res = self.check_rasult()
+            self.driver.find_element_by_link_text(u'确定').click()
+            self.driver.close()
+            self.driver.switch_to_window(windows[0])
+            self.dboperate.del_elem(self.db, clue_type)
+            back_parm = (self.phone, case_name, res)
+            self.row = self.row + 1
+            self.save_clue_log(back_parm)
+
     # logo设计
     def patent_clue_2(self):
-        locator = (By.XPATH, "(.//div[@class='fl isnaMar'])[2]")
-        WebDriverWait(self.driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
-        aa = self.driver.find_element_by_xpath("(.//div[@class='fl isnaMar'])[2]")
-        ActionChains(self.driver).move_to_element(aa).perform()
-        self.driver.find_element_by_link_text(u'logo设计').click()
-        # 切换至新窗口
-        windows = self.driver.window_handles
-        self.driver.switch_to_window(windows[-1])
+        clue_type = u'logo设计'
+        if self.dboperate.is_member(self.db, clue_type):
+            locator = (By.XPATH, "(.//div[@class='fl isnaMar'])[2]")
+            WebDriverWait(self.driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
+            aa = self.driver.find_element_by_xpath("(.//div[@class='fl isnaMar'])[2]")
+            ActionChains(self.driver).move_to_element(aa).perform()
+            self.driver.find_element_by_link_text(u'logo设计').click()
+            # 切换至新窗口
+            windows = self.driver.window_handles
+            self.driver.switch_to_window(windows[-1])
 
-        # 输入联系方式/联系人
-        case_name = self.driver.find_element_by_xpath("(.//div[@class='ui-apply-tit']/h3)").text
-        self.driver.find_element_by_id("consult_phone").send_keys(self.phone)
-        self.driver.find_element_by_id("consult_contact").send_keys(case_name)
+            # 输入联系方式/联系人
+            case_name = self.driver.find_element_by_xpath("(.//div[@class='ui-apply-tit']/h3)").text
+            self.driver.find_element_by_id("consult_phone").send_keys(self.phone)
+            self.driver.find_element_by_id("consult_contact").send_keys(case_name)
 
-        # 提交需求
-        self.driver.find_element_by_xpath("(.//div[@class='ui-zlsq-gwc']/a)[1]").click()
-        time.sleep(0.5)
-        # 判断是否成功推送
-        res = self.check_rasult()
-        self.driver.find_element_by_link_text(u'确定').click()
-        self.driver.close()
-        self.driver.switch_to_window(windows[0])
-        return (self.phone, case_name, res)
+            # 提交需求
+            self.driver.find_element_by_xpath("(.//div[@class='ui-zlsq-gwc']/a)[1]").click()
+            time.sleep(0.5)
+            # 判断是否成功推送
+            res = self.check_rasult()
+            self.driver.find_element_by_link_text(u'确定').click()
+            self.driver.close()
+            self.driver.switch_to_window(windows[0])
+
+            self.dboperate.del_elem(self.db, clue_type)
+            back_parm = (self.phone, case_name, res)
+            self.row = self.row + 1
+            self.save_clue_log(back_parm)
 
     # 创新线索14个
     def patent_clue_5(self):
@@ -292,8 +383,8 @@ class Execute(object, metaclass=FunctionName):
                 res = self.check_rasult()
                 self.driver.find_element_by_link_text(u'确定').click()
                 self.driver.close()
-                self.dboperate.del_elem(self.db, clue_type)
                 self.driver.switch_to_window(windows[0])
+                self.dboperate.del_elem(self.db, clue_type)
                 back_parm = (self.phone, case_name, res)
                 self.row = self.row + 1
                 self.save_clue_log(back_parm)
@@ -331,96 +422,32 @@ class Execute(object, metaclass=FunctionName):
                 # 提交需求
                 self.driver.find_element_by_xpath("(.//div[@class='ui-zlsq-gwc']/a)[1]").click()
                 time.sleep(0.5)
-                # result = self.driver.find_element_by_link_text(u'您的查询资料已提交， 顾问会尽快电话告诉您查询结果')
 
                 # 判断是否成功推送
                 res = self.check_rasult()
-
                 self.driver.find_element_by_link_text(u'确定').click()
                 self.driver.close()
-                self.dboperate.del_elem(self.db, clue_type)
                 self.driver.switch_to_window(windows[0])
+                self.dboperate.del_elem(self.db, clue_type)
                 back_parm = (self.phone, case_name, res, text, price)
                 self.row = self.row + 1
                 self.save_clue_log(back_parm)
 
-    # 海外国家专利申请-其他国家
-    def patent_clue_27(self):
-        locator = (By.XPATH, "(.//div[@class='fl isnaMar'])[2]")
-        WebDriverWait(self.driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
-        aa = self.driver.find_element_by_xpath("(.//div[@class='fl isnaMar'])[1]")
-        ActionChains(self.driver).move_to_element(aa).perform()
-        self.driver.find_element_by_link_text(u'海外国家专利申请').click()
-        # 切换至新窗口
-        windows = self.driver.window_handles
-        self.driver.switch_to_window(windows[-1])
-
-        # 选择国家，范围 1-6
-        self.driver.find_element_by_xpath("(.//li[@origin='92'])").click()
-        time.sleep(0.5)
-        # 选择类型范围  1：71-72；2:81-82；3:91-93;4:101-103;5:111-113;6:121-122
-        # self.driver.find_element_by_xpath("(.//li[@pt='71'])").click()
-        # time.sleep(0.5)
-
-        # 输入联系方式/联系人
-        case_name = self.driver.find_element_by_xpath("(.//div[@class='ui-apply-tit']//h3)").text
-        self.driver.find_element_by_id("consult_phone").send_keys(self.phone)
-        self.driver.find_element_by_id("consult_contact").send_keys(case_name)
-
-        # 提交需求
-        self.driver.find_element_by_xpath("(.//div[@class='ui-zlsq-gwc']/a)[1]").click()
-        time.sleep(0.5)
-        # 判断是否成功推送
-        res = self.check_rasult()
-        self.driver.find_element_by_link_text(u'确定').click()
-        self.driver.close()
-        self.driver.switch_to_window(windows[0])
-        return (self.phone, case_name, res)
-
-    # 海外国家专利申请--已测试
-    def patent_clue_28(self):
-        locator = (By.XPATH, "(.//div[@class='fl isnaMar'])[2]")
-        WebDriverWait(self.driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
-        aa = self.driver.find_element_by_xpath("(.//div[@class='fl isnaMar'])[1]")
-        ActionChains(self.driver).move_to_element(aa).perform()
-        self.driver.find_element_by_link_text(u'海外国家专利申请').click()
-        # 切换至新窗口
-        windows = self.driver.window_handles
-        self.driver.switch_to_window(windows[-1])
-
-        # 随机选择一个国家
-        num = random.randint(1, 6)
-        print(num)
-        self.driver.find_element_by_xpath("(.//li[@t='{}'])".format(num)).click()
-        nation = self.driver.find_element_by_xpath("(.//li[@t='{}'])".format(num)).text
-        time.sleep(0.5)
-        # 选择类型 1：71-72；2:81-82；3:91-93;4:101-103;5:111-113;6:121-122
-        nation_type = {}
-        nation_type.update({
-            "1": [71, 72], "2": [81, 82], "3": [91, 92, 93], "4": [101, 102, 103], "5": [111, 112, 113],
-            "6": [121, 122]})
-        # 随机选择一个业务类型
-        type_num = nation_type["{}".format(num)]
-        self.driver.find_element_by_xpath("(.//li[@pt='{}'])".format(random.choice(type_num))).click()
-        time.sleep(0.5)
-        name = self.driver.find_element_by_xpath("(.//li[@pt='{}'])".format(random.choice(type_num))).text
-        # 输入联系方式/联系人
-        case_name = self.driver.find_element_by_xpath("(.//div[@class='ui-apply-tit']//h3)").text
-        self.driver.find_element_by_id("consult_phone").send_keys(self.phone)
-        self.driver.find_element_by_id("consult_contact").send_keys(case_name + "-" + nation + "-"+ name)
-
-        # 提交需求
-        self.driver.find_element_by_xpath("(.//div[@class='ui-zlsq-gwc']/a)[1]").click()
-        time.sleep(0.5)
-        # 判断是否成功推送
-        res = self.check_rasult()
-        self.driver.find_element_by_link_text(u'确定').click()
-        self.driver.close()
-        self.driver.switch_to_window(windows[0])
-        return (self.phone, case_name, res)
-
 
 if __name__ == "__main__":
+    # 添加测试内容
+    res = DbOperate()
+    clue_db = "clue"
+    clue_1_1 = [u'专利布局规划', u'研发立项支持']
+    clue_1_2 = [u'新产品风险预警(FTO)', u'侵权风险分析', u'行业专利导航']
+    clue_1_3 = [u'无效证据检索', u'专利无效宣告', u'专利无效答辩']
+    clue_1_4 = [u'海外国家专利申请-其他国家', u'海外国家专利申请']
+    clue_2 = [u'logo设计']
+    clue_5 = [u'双软认证',  u'咨询分析报告', u'知识产权运营', u'知识产权顾问']
+    clue_5_1 = [u'软件开发']
+
+    all_clue_type = clue_1_1 + clue_1_2 + clue_1_3 + clue_1_4+clue_2+clue_5+clue_5_1
+    res.add(clue_db, all_clue_type)
     qq = Execute()
     qq.patent_clue_1_1()
     qq.patent_clue_1_2()
