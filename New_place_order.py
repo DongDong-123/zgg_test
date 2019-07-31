@@ -82,10 +82,10 @@ class Execute(object, metaclass=FunctionName):
             back_parm, all_info = eval("self.{}()".format(callback))
             self.row = self.row + 1
             time.sleep(0.5)
-            pay_totalPrice = self.pay(back_parm)
-            all_info.append(pay_totalPrice)
-            print(all_info, pay_totalPrice)
-            if float(all_info[2]) == float(all_info[3]) and float(all_info[2]) == float(pay_totalPrice) and \
+            pay_totalprice = self.pay(back_parm)
+            all_info.append(pay_totalprice)
+            print(all_info, pay_totalprice)
+            if float(all_info[2]) == float(all_info[3]) and float(all_info[2]) == float(pay_totalprice) and \
                     float(all_info[4]) == float(all_info[2]):
                 status = 'True'
             else:
@@ -123,19 +123,19 @@ class Execute(object, metaclass=FunctionName):
         case_name = self.driver.find_element_by_xpath("//tr[@class='tr-comm']/td[1]").text
         case_number = self.driver.find_element_by_xpath("//tr[@class='tr-comm']/td[3]").text
         case_price = self.driver.find_element_by_xpath("//tr[@class='tr-comm']/td[4]").text
-        totalPrice = self.driver.find_element_by_xpath("//div[@class='totalPrice']/div/b").text
-        totalPrice = self.process_price(totalPrice)
+        totalprice = self.driver.find_element_by_xpath("//div[@class='totalPrice']/div/b").text
+        totalprice = self.process_price(totalprice)
         self.driver.find_element_by_id('lnkPay').click()
         # 返回价格
-        return case_name, case_number, case_price, totalPrice
+        return case_name, case_number, case_price, totalprice
 
     # 支付
     def pay(self, windows):
-        pay_totalPrice = self.driver.find_element_by_xpath("//div[@class='totalPrice']/div/b").text
+        pay_totalprice = self.driver.find_element_by_xpath("//div[@class='totalPrice']/div/b").text
         self.driver.find_element_by_id('lnkPay').click()
         self.driver.switch_to_window(windows[-1])
         self.driver.find_element_by_xpath("//div[@class='wczfBtn']/input").click()
-        return self.process_price(pay_totalPrice)
+        return self.process_price(pay_totalprice)
 
     # 关闭窗口
     def closed_windows(self):
@@ -144,53 +144,6 @@ class Execute(object, metaclass=FunctionName):
         self.driver.switch_to_window(windows[-1])
         self.driver.close()
         self.driver.switch_to_window(windows[0])
-
-    # 获取未支付订单数
-    def get_code_num(self):
-        self.driver.get("{}/user/casemanage.html?state=1".format(ReadConfig().get_user_url()))
-        num = self.driver.find_element_by_xpath("//div[@class='fl']/a[2]/span").text
-        return int(num)
-
-    # 删除未支付订单
-    def delete_order(self):
-        self.driver.get("{}/user/casemanage.html?state=1".format(ReadConfig().get_user_url()))
-        locator = (By.LINK_TEXT, u'删除')
-        # 等待页面加载完毕
-        WebDriverWait(self.driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
-        # 读取订单号
-        order_number = self.driver.find_element_by_xpath("//tr[@class='tr-comm']/td[1]/span[1]").text
-        # 多个案件一个订单，只获取到了第一个案件号
-        case_name = self.driver.find_element_by_xpath("//tr/td[@class='case-mess']/span[1]").text
-        case_number = self.driver.find_element_by_xpath("//tr/td[@class='case-mess']/span[3]").text
-
-        print("order_number", order_number)
-        print("case_info", case_name)
-        print("case_info", case_number)
-        self.driver.find_element_by_link_text(u"删除").click()
-        self.driver.find_element_by_link_text(u"确定").click()
-        # 必须等一会，才能获取弹框
-        sleep(0.5)
-        # 关闭弹框
-        aler = self.driver.switch_to.alert
-        delete_staus = aler.text
-        print('delete_staus', delete_staus)
-        aler.accept()
-        # 存储
-        self.row = self.row + 1
-        self.save_delete_case((order_number, case_name, case_number, delete_staus))
-
-        # self.driver.refresh()  # 刷新页面
-
-    # 储存删除记录，同一订单多个案件，只存储第一个
-    def save_delete_case(self, infos):
-        # 获取案件名称、案件号
-        n = 0
-        for elem in infos:
-            self.booksheet.write(self.row, n, elem)
-            self.booksheet.col(n).width = 300 * 28
-            n += 1
-        path = os.path.join(self.report_path, "delete_{}.xls".format(self.timetemp))
-        self.workbook.save(path)
 
     # 存储案件类型，案件号
     def excel_number(self, infos):
@@ -234,8 +187,8 @@ class Execute(object, metaclass=FunctionName):
     #
     #     self.apply_now()
     #     # 获取下单页价格
-    #     case_name, case_number, case_price, totalPrice = self.commit_order()
-    #     return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+    #     case_name, case_number, case_price, totalprice = self.commit_order()
+    #     return windows, [case_name, case_number, detail_price, case_price, totalprice]
     #
     # # 2 发明专利-标准服务-加急撰写
     # def patent_invention_normal_urgent(self):
@@ -269,8 +222,8 @@ class Execute(object, metaclass=FunctionName):
     #     print("详情页价格", detail_price)
     #
     #     self.apply_now()
-    #     case_name, case_number, case_price, totalPrice = self.commit_order()
-    #     return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+    #     case_name, case_number, case_price, totalprice = self.commit_order()
+    #     return windows, [case_name, case_number, detail_price, case_price, totalprice]
     # #
     # # 3 发明专利-加强版
     # def patent_invention_strengthen(self):
@@ -303,8 +256,8 @@ class Execute(object, metaclass=FunctionName):
     #     print("详情页价格", detail_price)
     #
     #     self.apply_now()
-    #     case_name, case_number, case_price, totalPrice = self.commit_order()
-    #     return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+    #     case_name, case_number, case_price, totalprice = self.commit_order()
+    #     return windows, [case_name, case_number, detail_price, case_price, totalprice]
     #
     # # 4 发明专利-加强版-加急撰写
     # def patent_invention_strengthen_urgent(self):
@@ -337,8 +290,8 @@ class Execute(object, metaclass=FunctionName):
     #     print("详情页价格", detail_price)
     #
     #     self.apply_now()
-    #     case_name, case_number, case_price, totalPrice = self.commit_order()
-    #     return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+    #     case_name, case_number, case_price, totalprice = self.commit_order()
+    #     return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # # 5 发明专利-专家版
     # def patent_invention_expert(self):
@@ -371,8 +324,8 @@ class Execute(object, metaclass=FunctionName):
     #     print("详情页价格", detail_price)
     #
     #     self.apply_now()
-    #     case_name, case_number, case_price, totalPrice = self.commit_order()
-    #     return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+    #     case_name, case_number, case_price, totalprice = self.commit_order()
+    #     return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # # 6 发明专利-专家版-加急撰写
     # def patent_invention_expert_urgent(self):
@@ -405,8 +358,8 @@ class Execute(object, metaclass=FunctionName):
     #     print("详情页价格", detail_price)
     #
     #     self.apply_now()
-    #     case_name, case_number, case_price, totalPrice = self.commit_order()
-    #     return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+    #     case_name, case_number, case_price, totalprice = self.commit_order()
+    #     return windows, [case_name, case_number, detail_price, case_price, totalprice]
     #
     # # 7 发明专利-专家版-担保授权
     # def patent_invention_expert_guarantee(self):
@@ -439,8 +392,8 @@ class Execute(object, metaclass=FunctionName):
     #     print("详情页价格", detail_price)
     #
     #     self.apply_now()
-    #     case_name, case_number, case_price, totalPrice = self.commit_order()
-    #     return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+    #     case_name, case_number, case_price, totalprice = self.commit_order()
+    #     return windows, [case_name, case_number, detail_price, case_price, totalprice]
     #
     # # # 8 实用新型-标准版
     # # def patent_utility_normal(self):
@@ -471,8 +424,8 @@ class Execute(object, metaclass=FunctionName):
     # #     print("详情页价格", detail_price)
     # #
     # #     self.apply_now()
-    # #     case_name, case_number, case_price, totalPrice = case_name, case_number, case_price, totalPrice = self.commit_order()
-    # #     return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+    # #     case_name, case_number, case_price, totalprice = case_name, case_number, case_price, totalprice = self.commit_order()
+    # #     return windows, [case_name, case_number, detail_price, case_price, totalprice]
     #
     # # 9 实用新型-标准版-加急撰写
     # def patent_utility_normal_urgent(self):
@@ -504,8 +457,8 @@ class Execute(object, metaclass=FunctionName):
     #     print("详情页价格", detail_price)
     #
     #     self.apply_now()
-    #     case_name, case_number, case_price, totalPrice = self.commit_order()
-    #     return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+    #     case_name, case_number, case_price, totalprice = self.commit_order()
+    #     return windows, [case_name, case_number, detail_price, case_price, totalprice]
     #
     # # 10 实用新型-加强版
     # def patent_utility_strengthen(self):
@@ -537,8 +490,8 @@ class Execute(object, metaclass=FunctionName):
     #     print("详情页价格", detail_price)
     #
     #     self.apply_now()
-    #     case_name, case_number, case_price, totalPrice = self.commit_order()
-    #     return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+    #     case_name, case_number, case_price, totalprice = self.commit_order()
+    #     return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # # 11 实用新型-加强版-加急撰写
     # def patent_utility_strengthen_urgent(self):
@@ -570,8 +523,8 @@ class Execute(object, metaclass=FunctionName):
     #     print("详情页价格", detail_price)
     #
     #     self.apply_now()
-    #     case_name, case_number, case_price, totalPrice = self.commit_order()
-    #     return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+    #     case_name, case_number, case_price, totalprice = self.commit_order()
+    #     return windows, [case_name, case_number, detail_price, case_price, totalprice]
     #
     # # # 12 实用新型-专家版
     # def patent_utility_expert(self):
@@ -603,8 +556,8 @@ class Execute(object, metaclass=FunctionName):
     #     print("详情页价格", detail_price)
     #
     #     self.apply_now()
-    #     case_name, case_number, case_price, totalPrice = self.commit_order()
-    #     return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+    #     case_name, case_number, case_price, totalprice = self.commit_order()
+    #     return windows, [case_name, case_number, detail_price, case_price, totalprice]
     #
     # # 13 实用新型-专家版-加急撰写
     # def patent_utility_expert_urgent(self):
@@ -636,8 +589,8 @@ class Execute(object, metaclass=FunctionName):
     #     print("详情页价格", detail_price)
     #
     #     self.apply_now()
-    #     case_name, case_number, case_price, totalPrice = self.commit_order()
-    #     return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+    #     case_name, case_number, case_price, totalprice = self.commit_order()
+    #     return windows, [case_name, case_number, detail_price, case_price, totalprice]
     #
     # # 14 实用新型-专家版-担保授权
     # def patent_utility_expert_guarantee(self):
@@ -669,8 +622,8 @@ class Execute(object, metaclass=FunctionName):
     #     print("详情页价格", detail_price)
     #
     #     self.apply_now()
-    #     case_name, case_number, case_price, totalPrice = self.commit_order()
-    #     return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+    #     case_name, case_number, case_price, totalprice = self.commit_order()
+    #     return windows, [case_name, case_number, detail_price, case_price, totalprice]
     #
     # # 15 外观设计-单一产品-标准版
     # def patent_design_single_normal(self):
@@ -701,8 +654,8 @@ class Execute(object, metaclass=FunctionName):
     #     print("详情页价格", detail_price)
     #
     #     self.apply_now()
-    #     case_name, case_number, case_price, totalPrice = self.commit_order()
-    #     return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+    #     case_name, case_number, case_price, totalprice = self.commit_order()
+    #     return windows, [case_name, case_number, detail_price, case_price, totalprice]
     #
     # # 16 外观设计-单一产品-担保授权
     # def patent_design_single_guarantee(self):
@@ -733,8 +686,8 @@ class Execute(object, metaclass=FunctionName):
     #     print("详情页价格", detail_price)
     #
     #     self.apply_now()
-    #     case_name, case_number, case_price, totalPrice = self.commit_order()
-    #     return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+    #     case_name, case_number, case_price, totalprice = self.commit_order()
+    #     return windows, [case_name, case_number, detail_price, case_price, totalprice]
     #
     # 17 外观设计-成套产品-标准版
     def patent_design_complete_normal(self):
@@ -765,8 +718,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # # 18 外观设计-成套产品-担保授权
     # def patent_design_complete_guarantee(self):
@@ -797,8 +750,8 @@ class Execute(object, metaclass=FunctionName):
     #     print("详情页价格", detail_price)
     #
     #     self.apply_now()
-    #     case_name, case_number, case_price, totalPrice = self.commit_order()
-    #     return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+    #     case_name, case_number, case_price, totalprice = self.commit_order()
+    #     return windows, [case_name, case_number, detail_price, case_price, totalprice]
     #
     # # 19 外观设计-GUI外观-标准版
     # def patent_design_GUI_normal(self):
@@ -828,8 +781,8 @@ class Execute(object, metaclass=FunctionName):
     #     print("详情页价格", detail_price)
     #
     #     self.apply_now()
-    #     case_name, case_number, case_price, totalPrice = self.commit_order()
-    #     return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+    #     case_name, case_number, case_price, totalprice = self.commit_order()
+    #     return windows, [case_name, case_number, detail_price, case_price, totalprice]
     #
     # # # 20 外观设计-GUI外观-担保授权
     # def patent_design_GUI_guarantee(self):
@@ -860,8 +813,8 @@ class Execute(object, metaclass=FunctionName):
     #     print("详情页价格", detail_price)
     #
     #     self.apply_now()
-    #     case_name, case_number, case_price, totalPrice = self.commit_order()
-    #     return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+    #     case_name, case_number, case_price, totalprice = self.commit_order()
+    #     return windows, [case_name, case_number, detail_price, case_price, totalprice]
     #
     # 21 同日申请-标准版
     def patent_oneday_normal(self):
@@ -892,8 +845,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # # 22 同日申请-标准版-加急撰写
     # def patent_oneday_urgent(self):
@@ -925,8 +878,8 @@ class Execute(object, metaclass=FunctionName):
     #     print("详情页价格", detail_price)
     #
     #     self.apply_now()
-    #     case_name, case_number, case_price, totalPrice = self.commit_order()
-    #     return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+    #     case_name, case_number, case_price, totalprice = self.commit_order()
+    #     return windows, [case_name, case_number, detail_price, case_price, totalprice]
     #
     # # 23 同日申请-加强版
     # def patent_oneday_strengthen(self):
@@ -958,8 +911,8 @@ class Execute(object, metaclass=FunctionName):
     #     print("详情页价格", detail_price)
     #
     #     self.apply_now()
-    #     case_name, case_number, case_price, totalPrice = self.commit_order()
-    #     return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+    #     case_name, case_number, case_price, totalprice = self.commit_order()
+    #     return windows, [case_name, case_number, detail_price, case_price, totalprice]
     #
     # # 24 同日申请-加强版-加急撰写
     # def patent_oneday_strengthen_urgent(self):
@@ -991,8 +944,8 @@ class Execute(object, metaclass=FunctionName):
     #     print("详情页价格", detail_price)
     #
     #     self.apply_now()
-    #     case_name, case_number, case_price, totalPrice = self.commit_order()
-    #     return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+    #     case_name, case_number, case_price, totalprice = self.commit_order()
+    #     return windows, [case_name, case_number, detail_price, case_price, totalprice]
     #
     # 25 同日申请-专家版
     def patent_oneday_expert(self):
@@ -1024,8 +977,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 26 同日申请-专家版-加急撰写
     def patent_oneday_expert_urgent(self):
@@ -1057,8 +1010,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 27 同日申请-专家版-担保授权
     def patent_oneday_expert_guarantee(self):
@@ -1090,8 +1043,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 28 审查意见答复-发明专利
     def patent_examine_invention(self):
@@ -1123,8 +1076,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 29 审查意见答复-实用新型
     def patent_examine_utility(self):
@@ -1157,8 +1110,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 30 审查意见答复-外观设计
     def patent_examine_design(self):
@@ -1186,8 +1139,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 31 PCT国际申请
     def patent_PCT(self):
@@ -1216,8 +1169,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.driver.find_element_by_xpath(".//a[@id='gjzlapply']").click()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 32 查新检索-国内评估
     def patent_clue_domestic(self):
@@ -1246,8 +1199,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 33 查新检索-全球评估
     def patent_clue_global(self):
@@ -1276,8 +1229,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 34 第三方公众意见-无需检索
     def patent_public_noneed(self):
@@ -1305,8 +1258,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 35 第三方公众意见-需要检索
     def patent_public_need(self):
@@ -1336,8 +1289,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 36 授权前景分析-发明专利
     def patent_warrant_invention(self):
@@ -1368,8 +1321,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 37 授权前景分析-实用新型
     def patent_warrant_utility(self):
@@ -1402,8 +1355,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 38 授权前景分析-外观设计
     def patent_warrant_design(self):
@@ -1433,8 +1386,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # # 39 专利稳定性分析-发明专利
     def patent_stable_invention(self):
@@ -1465,8 +1418,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 40 专利稳定性分析-实用新型
     def patent_stable_utility(self):
@@ -1499,8 +1452,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 41 专利稳定性分析-外观设计
     def patent_stable_design(self):
@@ -1529,8 +1482,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 42 专利权评价报告-实用新型
     def patent_evaluate_utility(self):
@@ -1561,8 +1514,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 43 专利权评价报告-外观设计
     def patent_evaluate_design(self):
@@ -1593,8 +1546,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 44 专利申请复审-发明专利
     def patent_review_invention(self):
@@ -1626,8 +1579,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 45 专利申请复审-实用新型
     def patent_review_utility(self):
@@ -1660,8 +1613,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 46 专利申请复审-外观设计
     def patent_review_design(self):
@@ -1691,8 +1644,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 47 电商侵权处理
     def patent_online_retailers(self):
@@ -1720,8 +1673,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 48 著录项目变更
     def patent_description(self):
@@ -1755,8 +1708,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 49 专利权恢复
     def patent_recovery(self):
@@ -1784,8 +1737,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 50 代缴专利年费
     def patent_replace(self):
@@ -1814,8 +1767,8 @@ class Execute(object, metaclass=FunctionName):
         self.apply_now()
         self.driver.find_element_by_xpath(".//a[@class='apply-btn button']").click()
 
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 51 专利实施许可备案
     def patent_permit(self):
@@ -1842,8 +1795,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 52 专利质押备案
     def patent_pledge(self):
@@ -1870,8 +1823,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 53 集成电路布图设计
     def patent_circuit(self):
@@ -1898,8 +1851,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 54 专属顾问注册
     def trademark_adviser_register(self):
@@ -1941,8 +1894,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
         self.driver.find_element_by_xpath("//div[@id='bottombg']/div/span").click()
 
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 55 专属加急注册
     def trademark_urgent_register(self):
@@ -1984,8 +1937,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
         self.driver.find_element_by_xpath("//div[@id='bottombg']/div/span").click()
 
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 56 专属双享注册
     def trademark_double_register(self):
@@ -2026,8 +1979,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
         self.driver.find_element_by_xpath("//div[@id='bottombg']/div/span").click()
 
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 57 专属担保注册
     def trademark_guarantee_register(self):
@@ -2067,8 +2020,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.driver.find_element_by_xpath("//div[@id='bottombg']/div/span").click()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 58 驰名商标注册
     def trademark_famous_brand(self):
@@ -2093,8 +2046,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 59 集体商标注册
     def trademark_group_brand(self):
@@ -2119,8 +2072,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 60 证明商标注册
     def trademark_prove_brand(self):
@@ -2145,8 +2098,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 61 美国商标注册
     def trademark_USA_brand(self):
@@ -2173,8 +2126,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 62 日本商标注册
     def trademark_Japan_brand(self):
@@ -2201,8 +2154,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 63 韩国商标注册
     def trademark_Korea_brand(self):
@@ -2229,8 +2182,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 64 台湾商标注册
     def trademark_Taiwan_brand(self):
@@ -2257,8 +2210,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 65 香港商标注册
     def trademark_Hongkong_brand(self):
@@ -2285,8 +2238,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 66 德国商标注册
     def trademark_Germany_brand(self):
@@ -2313,8 +2266,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 67 欧盟商标注册
     def trademark_EU_brand(self):
@@ -2341,8 +2294,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 68 马德里商标注册
     def trademark_Madrid_brand(self):
@@ -2369,8 +2322,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 69 非洲知识产权组织
     def trademark_Africa_knowledge(self):
@@ -2397,8 +2350,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 70 商标驳回复审-普通
     def trademark_ordinary_reject(self):
@@ -2422,8 +2375,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 71 商标驳回复审-双保
     def trademark_double_reject(self):
@@ -2449,8 +2402,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 72 商标异议申请
     def trademark_objection_apply(self):
@@ -2475,8 +2428,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 73 商标异议答辩
     def trademark_objection_answer(self):
@@ -2504,8 +2457,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 74 商标异议不予注册
     def trademark_objection_noregistration(self):
@@ -2533,8 +2486,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 75 商标撤三申请
     def trademark_brand_revoke_apply(self):
@@ -2560,8 +2513,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 76 商标撤三答辩
     def trademark_brand_revoke_answer(self):
@@ -2587,8 +2540,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 77 商标无效宣告
     def trademark_brand_invalid_declare(self):
@@ -2614,8 +2567,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 78 商标无效答辩
     def trademark_brand_invalid_answer(self):
@@ -2641,8 +2594,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 79 商标诉讼
     def trademark_brand_litigation(self):
@@ -2666,8 +2619,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 80 商标变更
     def trademark_brand_change(self):
@@ -2691,8 +2644,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 81 商标续展-续展
     def trademark_brand_extension_01(self):
@@ -2718,8 +2671,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 82 商标续展-宽展
     def trademark_brand_extension_02(self):
@@ -2747,8 +2700,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 83 商标续展-补发续展
     def trademark_brand_extension_03(self):
@@ -2777,8 +2730,8 @@ class Execute(object, metaclass=FunctionName):
 
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 84 商标许可备案
     def trademark_brand_permit(self):
@@ -2807,8 +2760,8 @@ class Execute(object, metaclass=FunctionName):
 
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 85 商标许可备案-变更许可人
     def trademark_brand_permit_01(self):
@@ -2837,8 +2790,8 @@ class Execute(object, metaclass=FunctionName):
 
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 86 商标许可备案-许可提前终止
     def trademark_brand_permit_02(self):
@@ -2867,8 +2820,8 @@ class Execute(object, metaclass=FunctionName):
 
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 87 商标注销
     def trademark_brand_cancel(self):
@@ -2893,8 +2846,8 @@ class Execute(object, metaclass=FunctionName):
 
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 88 申请商标转让
     def trademark_brand_assignment_01(self):
@@ -2922,8 +2875,8 @@ class Execute(object, metaclass=FunctionName):
 
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 89 补发商标转让
     def trademark_brand_assignment_02(self):
@@ -2951,8 +2904,8 @@ class Execute(object, metaclass=FunctionName):
 
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 90 补发商标注册证申请
     def trademark_reissue_brand(self):
@@ -2977,8 +2930,8 @@ class Execute(object, metaclass=FunctionName):
 
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 91 出具商标注册证明申请
     def trademark_issue_brand(self):
@@ -3003,8 +2956,8 @@ class Execute(object, metaclass=FunctionName):
 
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 92 申请商标更正
     def trademark_brand_amend(self):
@@ -3029,8 +2982,8 @@ class Execute(object, metaclass=FunctionName):
 
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
         # 93 计算机软件著作权登记-36日
 
@@ -3056,8 +3009,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 112 国家高新企业认定-担保
     def highnew_enterprise_guarantee(self):
@@ -3083,8 +3036,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.apply_now()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # # 113 商标设计套餐
     # def taocan_design_package(self):
@@ -3117,8 +3070,8 @@ class Execute(object, metaclass=FunctionName):
     #     # 提交
     #     self.driver.find_element_by_xpath(".//a[@class='submit-btn']").click()
     #
-    #     case_name, case_number, case_price, totalPrice = self.commit_order()
-    #     return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+    #     case_name, case_number, case_price, totalprice = self.commit_order()
+    #     return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 114 商标保护套餐
     def taocan_protect_package(self):
@@ -3149,8 +3102,8 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.driver.find_element_by_xpath(".//a[@class='submit-btn']").click()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
     # 115 商标复审套餐
     def taocan_review_package(self):
@@ -3180,5 +3133,5 @@ class Execute(object, metaclass=FunctionName):
         print("详情页价格", detail_price)
 
         self.driver.find_element_by_xpath(".//a[@class='submit-btn']").click()
-        case_name, case_number, case_price, totalPrice = self.commit_order()
-        return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+        case_name, case_number, case_price, totalprice = self.commit_order()
+        return windows, [case_name, case_number, detail_price, case_price, totalprice]

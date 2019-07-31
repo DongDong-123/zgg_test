@@ -23,8 +23,8 @@ class Operate:
         # from New_place_order import Execute
         # from test_one import Execute
         # from test_point import Execute
-        # from trademark import Execute
-        from copyright import Execute
+        from trademark import Execute
+        # from copyright import Execute
         # self.dboperate.add(ReadConfig().get_trademake_type())
         response = Execute()
 
@@ -61,14 +61,17 @@ class Operate:
             print("{}发送完毕".format(callback))
             time.sleep(5)
 
-    def delete(self):
-        from New_place_order import Execute
-        test = Execute()
-        num = test.get_code_num()
-        for i in range(num):
-            test.delete_order()
+# 删除
+def delete():
+    from delete_unpay_case import Execute
+    test = Execute()
+    num = test.get_code_num()
+    for i in range(num):
+        test.delete_order()
+    print("删除完毕，共删除{}个".format(num))
 
 
+# 随机获取类型
 def random_list(num, lis):
     res = []
     for num in range(num):
@@ -94,13 +97,7 @@ def send_clue():
     print("线索发送完毕")
 
 
-def delete():
-    qq = Operate()
-    qq.delete()
-    print("删除完毕")
-
-
 if __name__ == '__main__':
-    # run()
-    send_clue()
+    run()
+    # send_clue()
     # delete()

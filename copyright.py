@@ -110,19 +110,19 @@ class Execute(object, metaclass=FunctionName):
         case_name = self.driver.find_element_by_xpath("//tr[@class='tr-comm']/td[1]").text
         case_number = self.driver.find_element_by_xpath("//tr[@class='tr-comm']/td[3]").text
         case_price = self.driver.find_element_by_xpath("//tr[@class='tr-comm']/td[4]").text
-        totalPrice = self.driver.find_element_by_xpath("//div[@class='totalPrice']/div/b").text
-        totalPrice = self.process_price(totalPrice)
+        totalprice = self.driver.find_element_by_xpath("//div[@class='totalPrice']/div/b").text
+        totalprice = self.process_price(totalprice)
         self.driver.find_element_by_id('lnkPay').click()
         # 返回价格
-        return case_name, case_number, case_price, totalPrice
+        return case_name, case_number, case_price, totalprice
 
     # 支付
     def pay(self, windows):
-        pay_totalPrice = self.driver.find_element_by_xpath("//div[@class='totalPrice']/div/b").text
+        pay_totalprice = self.driver.find_element_by_xpath("//div[@class='totalPrice']/div/b").text
         self.driver.find_element_by_id('lnkPay').click()
         self.driver.switch_to_window(windows[-1])
         self.driver.find_element_by_xpath("//div[@class='wczfBtn']/input").click()
-        return self.process_price(pay_totalPrice)
+        return self.process_price(pay_totalprice)
 
     # 关闭窗口
     def closed_windows(self, num):
@@ -131,51 +131,6 @@ class Execute(object, metaclass=FunctionName):
         self.driver.switch_to_window(windows[-1])
         self.driver.close()
         self.driver.switch_to_window(windows[num])
-
-    def get_code_num(self):
-        self.driver.get("{}/user/casemanage.html?state=1".format(ReadConfig().get_user_url()))
-        num = self.driver.find_element_by_xpath("//div[@class='fl']/a[2]/span").text
-        return int(num)
-
-    # 删除未支付订单
-    def delete_order(self):
-        locator = (By.LINK_TEXT, u'删除')
-        # 等待页面加载完毕
-        WebDriverWait(self.driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
-        # 读取订单号
-        order_number = self.driver.find_element_by_xpath("//tr[@class='tr-comm']/td[1]/span[1]").text
-        # 多个案件一个订单，只获取到了第一个案件号
-        case_name = self.driver.find_element_by_xpath("//tr/td[@class='case-mess']/span[1]").text
-        case_number = self.driver.find_element_by_xpath("//tr/td[@class='case-mess']/span[3]").text
-
-        print("order_number", order_number)
-        print("case_info", case_name)
-        print("case_info", case_number)
-        self.driver.find_element_by_link_text(u"删除").click()
-        self.driver.find_element_by_link_text(u"确定").click()
-        # 必须等一会，才能获取弹框
-        sleep(0.5)
-        # 关闭弹框
-        aler = self.driver.switch_to.alert
-        delete_staus = aler.text
-        print('delete_staus', delete_staus)
-        aler.accept()
-        # 存储
-        self.row = self.row + 1
-        self.save_delete_case((order_number, case_name, case_number, delete_staus))
-
-        # self.driver.refresh()  # 刷新页面
-
-    # 储存删除记录，同一订单多个案件，只存储第一个
-    def save_delete_case(self, infos):
-        # 获取案件名称、案件号
-        n = 0
-        for elem in infos:
-            self.booksheet.write(self.row, n, elem)
-            self.booksheet.col(n).width = 300 * 28
-            n += 1
-        path = os.path.join(self.report_path, "delete_{}.xls".format(self.timetemp))
-        self.workbook.save(path)
 
     # 存储案件类型，案件号
     def excel_number(self, infos):
@@ -214,15 +169,15 @@ class Execute(object, metaclass=FunctionName):
     #         print("详情页价格", detail_price)
     #
     #         self.apply_now()
-    #         case_name, case_number, case_price, totalPrice = self.commit_order()
-    #         # yield windows, [case_name, case_number, detail_price, case_price, totalPrice]
-    #         all_info = [case_name, case_number, detail_price, case_price, totalPrice]
+    #         case_name, case_number, case_price, totalprice = self.commit_order()
+    #         # yield windows, [case_name, case_number, detail_price, case_price, totalprice]
+    #         all_info = [case_name, case_number, detail_price, case_price, totalprice]
     #         self.row = self.row + 1
     #         time.sleep(0.5)
-    #         pay_totalPrice = self.pay(windows)
-    #         all_info.append(pay_totalPrice)
-    #         print(all_info, pay_totalPrice)
-    #         if float(all_info[2]) == float(all_info[3]) and float(all_info[2]) == float(pay_totalPrice) and \
+    #         pay_totalprice = self.pay(windows)
+    #         all_info.append(pay_totalprice)
+    #         print(all_info, pay_totalprice)
+    #         if float(all_info[2]) == float(all_info[3]) and float(all_info[2]) == float(pay_totalprice) and \
     #                 float(all_info[4]) == float(all_info[2]):
     #             status = 'True'
     #         else:
@@ -263,16 +218,16 @@ class Execute(object, metaclass=FunctionName):
     #         print("详情页价格", detail_price)
     #
     #         self.apply_now()
-    #         case_name, case_number, case_price, totalPrice = self.commit_order()
-    #         # return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+    #         case_name, case_number, case_price, totalprice = self.commit_order()
+    #         # return windows, [case_name, case_number, detail_price, case_price, totalprice]
     #
-    #         all_info = [case_name, case_number, detail_price, case_price, totalPrice]
+    #         all_info = [case_name, case_number, detail_price, case_price, totalprice]
     #         self.row = self.row + 1
     #         time.sleep(0.5)
-    #         pay_totalPrice = self.pay(windows)
-    #         all_info.append(pay_totalPrice)
-    #         print(all_info, pay_totalPrice)
-    #         if float(all_info[2]) == float(all_info[3]) and float(all_info[2]) == float(pay_totalPrice) and \
+    #         pay_totalprice = self.pay(windows)
+    #         all_info.append(pay_totalprice)
+    #         print(all_info, pay_totalprice)
+    #         if float(all_info[2]) == float(all_info[3]) and float(all_info[2]) == float(pay_totalprice) and \
     #                 float(all_info[4]) == float(all_info[2]):
     #             status = 'True'
     #         else:
@@ -292,51 +247,54 @@ class Execute(object, metaclass=FunctionName):
         all_type = [u'汇编作品著作权登记', u'文字作品著作权登记', u'摄影作品著作权登记', u'电影作品著作权登记', u'音乐作品著作权登记', u'曲艺作品著作权登记']
         for copyright_type in all_type:
             if self.dboperate.is_member(copyright_type):
-                locator = (By.XPATH, "//div[@class='isnav-first']/div[1]/h2")
-                WebDriverWait(self.driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
-                aa = self.driver.find_element_by_xpath("(.//div[@class='fl isnaMar'])[3]")
-                ActionChains(self.driver).move_to_element(aa).perform()
-                self.driver.find_element_by_link_text(copyright_type).click()
-                # 切换至新窗口
-                self.windows = self.driver.window_handles
-                self.driver.switch_to_window(self.windows[-1])
-                # 案件类型：
-                for num in range(1, 3):
-                    self.driver.find_element_by_xpath("//ul[@id='ulType']/li[{}]/a".format(num)).click()
-                    # 数量加减
-                    # self.number_add()
-                    # # self.number_minus()
-                    time.sleep(0.5)
-                    while not self.driver.find_element_by_id("totalfee").is_displayed():
+                try:
+                    locator = (By.XPATH, "//div[@class='isnav-first']/div[1]/h2")
+                    WebDriverWait(self.driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
+                    aa = self.driver.find_element_by_xpath("(.//div[@class='fl isnaMar'])[3]")
+                    ActionChains(self.driver).move_to_element(aa).perform()
+                    self.driver.find_element_by_link_text(copyright_type).click()
+                    # 切换至新窗口
+                    self.windows = self.driver.window_handles
+                    self.driver.switch_to_window(self.windows[-1])
+                    # 案件类型：
+                    for num in range(1, 3):
+                        self.driver.find_element_by_xpath("//ul[@id='ulType']/li[{}]/a".format(num)).click()
+                        # 数量加减
+                        # self.number_add()
+                        # # self.number_minus()
                         time.sleep(0.5)
-                    # 获取详情页 价格
-                    detail_price = self.driver.find_element_by_xpath("(.//div[@class='sames']//label[@id='totalfee'])").text
-                    print("详情页价格", detail_price)
+                        while not self.driver.find_element_by_id("totalfee").is_displayed():
+                            time.sleep(0.5)
+                        # 获取详情页 价格
+                        detail_price = self.driver.find_element_by_xpath("(.//div[@class='sames']//label[@id='totalfee'])").text
+                        print("详情页价格", detail_price)
 
-                    self.apply_now()
-                    case_name, case_number, case_price, totalPrice = self.commit_order()
-                    # return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+                        self.apply_now()
+                        case_name, case_number, case_price, totalprice = self.commit_order()
+                        # return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
-                    all_info = [case_name, case_number, detail_price, case_price, totalPrice]
-                    self.row = self.row + 1
-                    time.sleep(0.5)
-                    pay_totalPrice = self.pay(self.windows)
-                    all_info.append(pay_totalPrice)
-                    print(all_info, pay_totalPrice)
-                    if float(all_info[2]) == float(all_info[3]) and float(all_info[2]) == float(pay_totalPrice) and \
-                            float(all_info[4]) == float(all_info[2]):
-                        status = 'True'
-                    else:
-                        status = "False"
-                    all_info.append(status)
-                    self.excel_number(all_info)
+                        all_info = [case_name, case_number, detail_price, case_price, totalprice]
+                        self.row = self.row + 1
+                        time.sleep(0.5)
+                        pay_totalprice = self.pay(self.windows)
+                        all_info.append(pay_totalprice)
+                        print(all_info, pay_totalprice)
+                        if float(all_info[2]) == float(all_info[3]) and float(all_info[2]) == float(pay_totalprice) and \
+                                float(all_info[4]) == float(all_info[2]):
+                            status = 'True'
+                        else:
+                            status = "False"
+                        all_info.append(status)
+                        self.excel_number(all_info)
 
-                    time.sleep(1)
-                    self.driver.back()
-                    self.driver.back()
-                    self.driver.back()
-                    self.closed_windows(1)
-                self.dboperate.del_elem(copyright_type)
-                self.closed_windows(0)
-                time.sleep(1)
+                        time.sleep(1)
+                        self.driver.back()
+                        self.driver.back()
+                        self.driver.back()
+                        self.closed_windows(1)
+                except Exception as e:
+                    self.driver.switch_to_window(self.windows[0])
+            self.dboperate.del_elem(copyright_type)
+            self.closed_windows(0)
+            time.sleep(1)
 
