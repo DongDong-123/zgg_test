@@ -174,15 +174,19 @@ class Execute(object, metaclass=FunctionName):
                     # 切换至选择商标分类页面
                     self.windows = self.driver.window_handles
                     self.driver.switch_to_window(self.windows[-1])
-                    num = random.randint(1, 45)
-                    # num = 35
+                    # 双滚动条有问题，底部的无法点击
+                    num = random.randint(1, 30)
+                    # num = 20
+                    print("num", num)
                     time.sleep(1)
                     target = self.driver.find_element_by_xpath(
                         ".//ul[@class='statuslist']/li[@idx='{}']".format(num))
-                    self.driver.execute_script("arguments[0].scrollIntoView();", target)
-                    time.sleep(0.5)
+                    self.driver.execute_script("arguments[0].scrollIntoView(true);", target)
+                    time.sleep(1)
                     self.driver.find_element_by_xpath(".//ul[@class='statuslist']/li[{}]".format(num)).click()
 
+                    # ActionChains(self.driver).move_to_element(
+                    #     self.driver.find_element(By.XPATH, "//ul[@class='statuslist']/li[{}]".format(num))).click()
                     time.sleep(0.5)
                     while not self.driver.find_element_by_id("costesNum").is_displayed():
                         time.sleep(0.5)
@@ -193,7 +197,7 @@ class Execute(object, metaclass=FunctionName):
                     detail_price = self.process_price(detail_price)
 
                     print("详情页价格", detail_price)
-                    self.driver.find_element_by_xpath("//div[@id='bottombg']/div/span").click()
+                    self.driver.find_element_by_xpath(".//div[@id='bottombg']/div/span").click()
 
                     case_name, case_number, case_price, totalprice = self.commit_order()
                     # return windows, [case_name, case_number, detail_price, case_price, totalprice]
@@ -226,7 +230,7 @@ class Execute(object, metaclass=FunctionName):
             if self.dboperate.is_member(self.db, international_type):
                 # print(self.dboperate.is_member(international_type))
                 try:
-                    locator = (By.XPATH, "//div[@class='isnav-first']/div[1]/h2")
+                    locator = (By.XPATH, ".//div[@class='isnav-first']/div[1]/h2")
                     WebDriverWait(self.driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
                     aa = self.driver.find_element_by_xpath("(.//div[@class='fl isnaMar'])[2]")
                     ActionChains(self.driver).move_to_element(aa).perform()
@@ -321,7 +325,7 @@ class Execute(object, metaclass=FunctionName):
     def trademark_ordinary_reject(self):
         this_type = u'商标驳回复审'
         if self.dboperate.is_member(self.db, this_type):
-            locator = (By.XPATH, "//div[@class='isnav-first']/div[1]/h2")
+            locator = (By.XPATH, ".//div[@class='isnav-first']/div[1]/h2")
             WebDriverWait(self.driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
             aa = self.driver.find_element_by_xpath("(.//div[@class='fl isnaMar'])[2]")
             ActionChains(self.driver).move_to_element(aa).perform()
@@ -376,7 +380,7 @@ class Execute(object, metaclass=FunctionName):
     def trademark_objection_apply(self):
         this_type = u'商标异议'
         if self.dboperate.is_member(self.db, this_type):
-            locator = (By.XPATH, "//div[@class='isnav-first']/div[1]/h2")
+            locator = (By.XPATH, ".//div[@class='isnav-first']/div[1]/h2")
             WebDriverWait(self.driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
             aa = self.driver.find_element_by_xpath("(.//div[@class='fl isnaMar'])[2]")
             ActionChains(self.driver).move_to_element(aa).perform()
@@ -387,7 +391,7 @@ class Execute(object, metaclass=FunctionName):
             # 业务方向:异议申请、异议答辩、不予注册复审
             for num in [22721, 22722]:
                 try:
-                    self.driver.find_element_by_xpath("//li[@pt='{}']/a".format(num)).click()
+                    self.driver.find_element_by_xpath(".//li[@pt='{}']/a".format(num)).click()
                     # 数量加减
                     # self.number_add()
                     # # self.number_minus()
@@ -427,7 +431,7 @@ class Execute(object, metaclass=FunctionName):
     def trademark_brand_revoke_answer(self):
         this_type = u'商标撤销'
         if self.dboperate.is_member(self.db, this_type):
-            locator = (By.XPATH, "//div[@class='isnav-first']/div[1]/h2")
+            locator = (By.XPATH, ".//div[@class='isnav-first']/div[1]/h2")
             WebDriverWait(self.driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
             aa = self.driver.find_element_by_xpath("(.//div[@class='fl isnaMar'])[2]")
             ActionChains(self.driver).move_to_element(aa).perform()
@@ -438,10 +442,22 @@ class Execute(object, metaclass=FunctionName):
             # 业务方向:商标撤三申请、商标撤三答辩
             for num in range(1, 3):
                 try:
-                    self.driver.find_element_by_xpath("//ul[@p='2273']/li[{}]/a".format(num)).click()
+                    self.driver.find_element_by_xpath(".//ul[@p='2273']/li[{}]/a".format(num)).click()
                     # 数量加减
                     # self.number_add()
                     # # self.number_minus()
+                    time.sleep(0.5)
+                    while not self.driver.find_element_by_id("totalfee").is_displayed():
+                        time.sleep(0.5)
+                    # 获取详情页 价格
+                    detail_price = self.driver.find_element_by_xpath("(.//div[@class='sames']//label[@id='totalfee'])").text
+                    print("详情页价格", detail_price)
+
+                    self.apply_now()
+                    case_name, case_number, case_price, totalprice = self.commit_order()
+                    all_info = [case_name, case_number, detail_price, case_price, totalprice]
+                    self.row = self.row + 1
+                    time.sleep(0.5)
                     time.sleep(0.5)
                     while not self.driver.find_element_by_id("totalfee").is_displayed():
                         time.sleep(0.5)
@@ -479,7 +495,7 @@ class Execute(object, metaclass=FunctionName):
     def trademark_brand_invalid_declare(self):
         this_type = u'商标无效'
         if self.dboperate.is_member(self.db, this_type):
-            locator = (By.XPATH, "//div[@class='isnav-first']/div[1]/h2")
+            locator = (By.XPATH, ".//div[@class='isnav-first']/div[1]/h2")
             WebDriverWait(self.driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
             aa = self.driver.find_element_by_xpath("(.//div[@class='fl isnaMar'])[2]")
             ActionChains(self.driver).move_to_element(aa).perform()
@@ -490,10 +506,22 @@ class Execute(object, metaclass=FunctionName):
             # 业务方向:商标无效宣告、商标无效宣告答辩
             for num in range(1, 3):
                 try:
-                    self.driver.find_element_by_xpath("//ul[@p='2279']/li[{}]/a".format(num)).click()
+                    self.driver.find_element_by_xpath(".//ul[@p='2279']/li[{}]/a".format(num)).click()
                     # 数量加减
                     # self.number_add()
                     # # self.number_minus()
+                    time.sleep(0.5)
+                    while not self.driver.find_element_by_id("totalfee").is_displayed():
+                        time.sleep(0.5)
+                    # 获取详情页 价格
+                    detail_price = self.driver.find_element_by_xpath("(.//div[@class='sames']//label[@id='totalfee'])").text
+                    print("详情页价格", detail_price)
+
+                    self.apply_now()
+                    case_name, case_number, case_price, totalprice = self.commit_order()
+                    all_info = [case_name, case_number, detail_price, case_price, totalprice]
+                    self.row = self.row + 1
+                    time.sleep(0.5)
                     time.sleep(0.5)
                     while not self.driver.find_element_by_id("totalfee").is_displayed():
                         time.sleep(0.5)
@@ -531,7 +559,7 @@ class Execute(object, metaclass=FunctionName):
     def trademark_brand_extension_01(self):
         this_type = u'商标续展'
         if self.dboperate.is_member(self.db, this_type):
-            locator = (By.XPATH, "//div[@class='isnav-first']/div[1]/h2")
+            locator = (By.XPATH, ".//div[@class='isnav-first']/div[1]/h2")
             WebDriverWait(self.driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
             aa = self.driver.find_element_by_xpath("(.//div[@class='fl isnaMar'])[2]")
             ActionChains(self.driver).move_to_element(aa).perform()
@@ -542,10 +570,22 @@ class Execute(object, metaclass=FunctionName):
             # 业务方向:续展申请、宽展申请、补发续展证明
             for num in range(1, 4):
                 try:
-                    self.driver.find_element_by_xpath("//ul[@p='2274']/li[{}]/a".format(num)).click()
+                    self.driver.find_element_by_xpath(".//ul[@p='2274']/li[{}]/a".format(num)).click()
                     # 数量加减
                     # self.number_add()
                     # # self.number_minus()
+                    time.sleep(0.5)
+                    while not self.driver.find_element_by_id("totalfee").is_displayed():
+                        time.sleep(0.5)
+                    # 获取详情页 价格
+                    detail_price = self.driver.find_element_by_xpath("(.//div[@class='sames']//label[@id='totalfee'])").text
+                    print("详情页价格", detail_price)
+
+                    self.apply_now()
+                    case_name, case_number, case_price, totalprice = self.commit_order()
+                    all_info = [case_name, case_number, detail_price, case_price, totalprice]
+                    self.row = self.row + 1
+                    time.sleep(0.5)
                     time.sleep(0.5)
                     while not self.driver.find_element_by_id("totalfee").is_displayed():
                         time.sleep(0.5)
@@ -583,7 +623,7 @@ class Execute(object, metaclass=FunctionName):
     def trademark_brand_permit(self):
         this_type = u'商标许可备案'
         if self.dboperate.is_member(self.db, this_type):
-            locator = (By.XPATH, "//div[@class='isnav-first']/div[1]/h2")
+            locator = (By.XPATH, ".//div[@class='isnav-first']/div[1]/h2")
             WebDriverWait(self.driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
             aa = self.driver.find_element_by_xpath("(.//div[@class='fl isnaMar'])[2]")
             ActionChains(self.driver).move_to_element(aa).perform()
@@ -594,7 +634,7 @@ class Execute(object, metaclass=FunctionName):
             # 业务方向:许可备案、变更（被）许可人名称、许可提前终止
             for num in range(1, 4):
                 try:
-                    self.driver.find_element_by_xpath("//ul[@p='2278']/li[{}]/a".format(num)).click()
+                    self.driver.find_element_by_xpath(".//ul[@p='2278']/li[{}]/a".format(num)).click()
                     # 数量加减
                     # self.number_add()
                     # # self.number_minus()
