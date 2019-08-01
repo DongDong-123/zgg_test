@@ -102,10 +102,10 @@ class Execute(object, metaclass=FunctionName):
             back_parm, all_info = eval("self.{}()".format(callback))
             # self.row = self.row + 1
             # time.sleep(0.5)
-            # pay_totalPrice = self.pay(back_parm)
-            # all_info.append(pay_totalPrice)
-            # print(all_info, pay_totalPrice)
-            # if float(all_info[2]) == float(all_info[3]) and float(all_info[2]) == float(pay_totalPrice) and \
+            # pay_totalprice = self.pay(back_parm)
+            # all_info.append(pay_totalprice)
+            # print(all_info, pay_totalprice)
+            # if float(all_info[2]) == float(all_info[3]) and float(all_info[2]) == float(pay_totalprice) and \
             #         float(all_info[4]) == float(all_info[2]):
             #     status = 'True'
             # else:
@@ -147,19 +147,19 @@ class Execute(object, metaclass=FunctionName):
         case_name = self.driver.find_element_by_xpath("//tr[@class='tr-comm']/td[1]").text
         case_number = self.driver.find_element_by_xpath("//tr[@class='tr-comm']/td[3]").text
         case_price = self.driver.find_element_by_xpath("//tr[@class='tr-comm']/td[4]").text
-        totalPrice = self.driver.find_element_by_xpath("//div[@class='totalPrice']/div/b").text
-        totalPrice = self.process_price(totalPrice)
+        totalprice = self.driver.find_element_by_xpath("//div[@class='totalPrice']/div/b").text
+        totalprice = self.process_price(totalprice)
         self.driver.find_element_by_id('lnkPay').click()
         # 返回价格
-        return case_name, case_number, case_price, totalPrice
+        return case_name, case_number, case_price, totalprice
 
     # 支付
     def pay(self, windows):
-        pay_totalPrice = self.driver.find_element_by_xpath("//div[@class='totalPrice']/div/b").text
+        pay_totalprice = self.driver.find_element_by_xpath("//div[@class='totalPrice']/div/b").text
         self.driver.find_element_by_id('lnkPay').click()
         self.driver.switch_to_window(windows[-1])
         self.driver.find_element_by_xpath("//div[@class='wczfBtn']/input").click()
-        return self.process_price(pay_totalPrice)
+        return self.process_price(pay_totalprice)
 
     # 关闭窗口
     def closed_windows(self):
@@ -247,15 +247,15 @@ class Execute(object, metaclass=FunctionName):
             print("详情页价格", detail_price)
 
             self.apply_now()
-            case_name, case_number, case_price, totalPrice = self.commit_order()
-            # yield windows, [case_name, case_number, detail_price, case_price, totalPrice]
-            all_info = [case_name, case_number, detail_price, case_price, totalPrice]
+            case_name, case_number, case_price, totalprice = self.commit_order()
+            # yield windows, [case_name, case_number, detail_price, case_price, totalprice]
+            all_info = [case_name, case_number, detail_price, case_price, totalprice]
             self.row = self.row + 1
             time.sleep(0.5)
-            pay_totalPrice = self.pay(windows)
-            all_info.append(pay_totalPrice)
-            print(all_info, pay_totalPrice)
-            if float(all_info[2]) == float(all_info[3]) and float(all_info[2]) == float(pay_totalPrice) and \
+            pay_totalprice = self.pay(windows)
+            all_info.append(pay_totalprice)
+            print(all_info, pay_totalprice)
+            if float(all_info[2]) == float(all_info[3]) and float(all_info[2]) == float(pay_totalprice) and \
                     float(all_info[4]) == float(all_info[2]):
                 status = 'True'
             else:
@@ -294,16 +294,16 @@ class Execute(object, metaclass=FunctionName):
             print("详情页价格", detail_price)
 
             self.apply_now()
-            case_name, case_number, case_price, totalPrice = self.commit_order()
-            # return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+            case_name, case_number, case_price, totalprice = self.commit_order()
+            # return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
-            all_info = [case_name, case_number, detail_price, case_price, totalPrice]
+            all_info = [case_name, case_number, detail_price, case_price, totalprice]
             self.row = self.row + 1
             time.sleep(0.5)
-            pay_totalPrice = self.pay(windows)
-            all_info.append(pay_totalPrice)
-            print(all_info, pay_totalPrice)
-            if float(all_info[2]) == float(all_info[3]) and float(all_info[2]) == float(pay_totalPrice) and \
+            pay_totalprice = self.pay(windows)
+            all_info.append(pay_totalprice)
+            print(all_info, pay_totalprice)
+            if float(all_info[2]) == float(all_info[3]) and float(all_info[2]) == float(pay_totalprice) and \
                     float(all_info[4]) == float(all_info[2]):
                 status = 'True'
             else:
@@ -341,16 +341,16 @@ class Execute(object, metaclass=FunctionName):
             print("详情页价格", detail_price)
 
             self.apply_now()
-            case_name, case_number, case_price, totalPrice = self.commit_order()
-            # return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+            case_name, case_number, case_price, totalprice = self.commit_order()
+            # return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
-            all_info = [case_name, case_number, detail_price, case_price, totalPrice]
+            all_info = [case_name, case_number, detail_price, case_price, totalprice]
             self.row = self.row + 1
             time.sleep(0.5)
-            pay_totalPrice = self.pay(windows)
-            all_info.append(pay_totalPrice)
-            print(all_info, pay_totalPrice)
-            if float(all_info[2]) == float(all_info[3]) and float(all_info[2]) == float(pay_totalPrice) and \
+            pay_totalprice = self.pay(windows)
+            all_info.append(pay_totalprice)
+            print(all_info, pay_totalprice)
+            if float(all_info[2]) == float(all_info[3]) and float(all_info[2]) == float(pay_totalprice) and \
                     float(all_info[4]) == float(all_info[2]):
                 status = 'True'
             else:
@@ -387,16 +387,16 @@ class Execute(object, metaclass=FunctionName):
             print("详情页价格", detail_price)
 
             self.apply_now()
-            case_name, case_number, case_price, totalPrice = self.commit_order()
-            # return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+            case_name, case_number, case_price, totalprice = self.commit_order()
+            # return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
-            all_info = [case_name, case_number, detail_price, case_price, totalPrice]
+            all_info = [case_name, case_number, detail_price, case_price, totalprice]
             self.row = self.row + 1
             time.sleep(0.5)
-            pay_totalPrice = self.pay(windows)
-            all_info.append(pay_totalPrice)
-            print(all_info, pay_totalPrice)
-            if float(all_info[2]) == float(all_info[3]) and float(all_info[2]) == float(pay_totalPrice) and \
+            pay_totalprice = self.pay(windows)
+            all_info.append(pay_totalprice)
+            print(all_info, pay_totalprice)
+            if float(all_info[2]) == float(all_info[3]) and float(all_info[2]) == float(pay_totalprice) and \
                     float(all_info[4]) == float(all_info[2]):
                 status = 'True'
             else:
@@ -433,16 +433,16 @@ class Execute(object, metaclass=FunctionName):
             print("详情页价格", detail_price)
 
             self.apply_now()
-            case_name, case_number, case_price, totalPrice = self.commit_order()
-            # return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+            case_name, case_number, case_price, totalprice = self.commit_order()
+            # return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
-            all_info = [case_name, case_number, detail_price, case_price, totalPrice]
+            all_info = [case_name, case_number, detail_price, case_price, totalprice]
             self.row = self.row + 1
             time.sleep(0.5)
-            pay_totalPrice = self.pay(windows)
-            all_info.append(pay_totalPrice)
-            print(all_info, pay_totalPrice)
-            if float(all_info[2]) == float(all_info[3]) and float(all_info[2]) == float(pay_totalPrice) and \
+            pay_totalprice = self.pay(windows)
+            all_info.append(pay_totalprice)
+            print(all_info, pay_totalprice)
+            if float(all_info[2]) == float(all_info[3]) and float(all_info[2]) == float(pay_totalprice) and \
                     float(all_info[4]) == float(all_info[2]):
                 status = 'True'
             else:
@@ -479,16 +479,16 @@ class Execute(object, metaclass=FunctionName):
             print("详情页价格", detail_price)
 
             self.apply_now()
-            case_name, case_number, case_price, totalPrice = self.commit_order()
-            # return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+            case_name, case_number, case_price, totalprice = self.commit_order()
+            # return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
-            all_info = [case_name, case_number, detail_price, case_price, totalPrice]
+            all_info = [case_name, case_number, detail_price, case_price, totalprice]
             self.row = self.row + 1
             time.sleep(0.5)
-            pay_totalPrice = self.pay(windows)
-            all_info.append(pay_totalPrice)
-            print(all_info, pay_totalPrice)
-            if float(all_info[2]) == float(all_info[3]) and float(all_info[2]) == float(pay_totalPrice) and \
+            pay_totalprice = self.pay(windows)
+            all_info.append(pay_totalprice)
+            print(all_info, pay_totalprice)
+            if float(all_info[2]) == float(all_info[3]) and float(all_info[2]) == float(pay_totalprice) and \
                     float(all_info[4]) == float(all_info[2]):
                 status = 'True'
             else:
@@ -526,16 +526,16 @@ class Execute(object, metaclass=FunctionName):
             print("详情页价格", detail_price)
 
             self.apply_now()
-            case_name, case_number, case_price, totalPrice = self.commit_order()
-            # return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+            case_name, case_number, case_price, totalprice = self.commit_order()
+            # return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
-            all_info = [case_name, case_number, detail_price, case_price, totalPrice]
+            all_info = [case_name, case_number, detail_price, case_price, totalprice]
             self.row = self.row + 1
             time.sleep(0.5)
-            pay_totalPrice = self.pay(windows)
-            all_info.append(pay_totalPrice)
-            print(all_info, pay_totalPrice)
-            if float(all_info[2]) == float(all_info[3]) and float(all_info[2]) == float(pay_totalPrice) and \
+            pay_totalprice = self.pay(windows)
+            all_info.append(pay_totalprice)
+            print(all_info, pay_totalprice)
+            if float(all_info[2]) == float(all_info[3]) and float(all_info[2]) == float(pay_totalprice) and \
                     float(all_info[4]) == float(all_info[2]):
                 status = 'True'
             else:
@@ -573,16 +573,16 @@ class Execute(object, metaclass=FunctionName):
             print("详情页价格", detail_price)
 
             self.apply_now()
-            case_name, case_number, case_price, totalPrice = self.commit_order()
-            # return windows, [case_name, case_number, detail_price, case_price, totalPrice]
+            case_name, case_number, case_price, totalprice = self.commit_order()
+            # return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
-            all_info = [case_name, case_number, detail_price, case_price, totalPrice]
+            all_info = [case_name, case_number, detail_price, case_price, totalprice]
             self.row = self.row + 1
             time.sleep(0.5)
-            pay_totalPrice = self.pay(windows)
-            all_info.append(pay_totalPrice)
-            print(all_info, pay_totalPrice)
-            if float(all_info[2]) == float(all_info[3]) and float(all_info[2]) == float(pay_totalPrice) and \
+            pay_totalprice = self.pay(windows)
+            all_info.append(pay_totalprice)
+            print(all_info, pay_totalprice)
+            if float(all_info[2]) == float(all_info[3]) and float(all_info[2]) == float(pay_totalprice) and \
                     float(all_info[4]) == float(all_info[2]):
                 status = 'True'
             else:
