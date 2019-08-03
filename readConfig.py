@@ -19,6 +19,9 @@ class ReadConfig:
     def save_report(self):
         return self.cfg.get("path", "REPORT")
 
+    def save_screen(self):
+        return self.cfg.get("path", "SCREEN_SHOOT")
+
     def get_root_url(self):
         return self.cfg.get("URL", "URL")
 

@@ -63,6 +63,8 @@ class Execute(object, metaclass=FunctionName):
         self.excel_number(("案件名称", "案件号", "详情页价格", "下单页价格", "下单页总价格", "支付页总价格", "价格状态"))
         self.dboperate = DbOperate()
         self.windows = None
+        self.db = "copyright"
+        self.screen_path = ReadConfig().save_screen()
 
     # 增加案件数量
     def number_add(self):
@@ -126,11 +128,14 @@ class Execute(object, metaclass=FunctionName):
 
     # 关闭窗口
     def closed_windows(self, num):
-        # self.driver.close()
-        windows = self.driver.window_handles
-        self.driver.switch_to_window(windows[-1])
+        self.windows = self.driver.window_handles
+        self.driver.switch_to_window(self.windows[-1])
         self.driver.close()
-        self.driver.switch_to_window(windows[num])
+        self.windows = self.driver.window_handles
+        if len(self.windows) > 1:
+            self.driver.switch_to_window(self.windows[num])
+        else:
+            self.driver.switch_to_window(self.windows[0])
 
     # 存储案件类型，案件号
     def excel_number(self, infos):
@@ -144,109 +149,147 @@ class Execute(object, metaclass=FunctionName):
             path = os.path.join(self.report_path, "report_{}.xls".format(self.timetemp))
             self.workbook.save(path)
 
-    # 选择计算机软件著作权登记
-    # def copyright_computer_software_01(self):
-    #     locator = (By.XPATH, "//div[@class='isnav-first']/div[1]/h2")
-    #     WebDriverWait(self.driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
-    #     aa = self.driver.find_element_by_xpath("(.//div[@class='fl isnaMar'])[3]")
-    #     ActionChains(self.driver).move_to_element(aa).perform()
-    #     self.driver.find_element_by_link_text(u'计算机软件著作权登记').click()
-    #     # 切换至新窗口
-    #     windows = self.driver.window_handles
-    #     self.driver.switch_to_window(windows[-1])
-    #     # 服务类型：
-    #     # 1-6，36个工作日-3个工作日
-    #     for num in range(1, 7):
-    #         self.driver.find_element_by_xpath("//ul[@p='232']/li[{}]/a".format(num)).click()
-    #         # 数量加减
-    #         # self.number_add()
-    #         # self.number_minus()
-    #         time.sleep(0.5)
-    #         while not self.driver.find_element_by_id("totalfee").is_displayed():
-    #             time.sleep(0.5)
-    #         # 获取详情页 价格
-    #         detail_price = self.driver.find_element_by_xpath("(.//div[@class='sames']//label[@id='totalfee'])").text
-    #         print("详情页价格", detail_price)
-    #
-    #         self.apply_now()
-    #         case_name, case_number, case_price, totalprice = self.commit_order()
-    #         # yield windows, [case_name, case_number, detail_price, case_price, totalprice]
-    #         all_info = [case_name, case_number, detail_price, case_price, totalprice]
-    #         self.row = self.row + 1
-    #         time.sleep(0.5)
-    #         pay_totalprice = self.pay(windows)
-    #         all_info.append(pay_totalprice)
-    #         print(all_info, pay_totalprice)
-    #         if float(all_info[2]) == float(all_info[3]) and float(all_info[2]) == float(pay_totalprice) and \
-    #                 float(all_info[4]) == float(all_info[2]):
-    #             status = 'True'
-    #         else:
-    #             status = "False"
-    #         all_info.append(status)
-    #         self.excel_number(all_info)
-    #         time.sleep(1)
-    #         self.driver.back()
-    #         self.driver.back()
-    #         self.driver.back()
-    #         self.closed_windows(1)
-    #     self.closed_windows(0)
+    # 二维码窗口截图
+    def qr_shotscreen(self, name):
+        current_window = self.driver.current_window_handle
+        windows = self.driver.window_handles
+        self.driver.switch_to_window(windows[-1])
+        # 等待二维码加载
+        locator = (By.XPATH, "//canvas")
+        WebDriverWait(self.driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
 
-    # 99 美术作品著作权登记-30日
-    # def copyright_art_works_01(self):
-    #     # 选择美术作品著作权登记
-    #     locator = (By.XPATH, "//div[@class='isnav-first']/div[1]/h2")
-    #     WebDriverWait(self.driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
-    #     aa = self.driver.find_element_by_xpath("(.//div[@class='fl isnaMar'])[3]")
-    #     ActionChains(self.driver).move_to_element(aa).perform()
-    #     self.driver.find_element_by_link_text(u'汇编作品著作权登记').click()
-    #     # 切换至新窗口
-    #     windows = self.driver.window_handles
-    #     self.driver.switch_to_window(windows[-1])
-    #     # 服务类型：
-    #     # 30个工作日
-    #     for num in range(1, 7):
-    #         self.driver.find_element_by_xpath("//ul[@p='107538']/li[{}]/a".format(num)).click()
-    #
-    #         # 数量加减
-    #         # self.number_add()
-    #         # # self.number_minus()
-    #         time.sleep(0.5)
-    #         while not self.driver.find_element_by_id("totalfee").is_displayed():
-    #             time.sleep(0.5)
-    #         # 获取详情页 价格
-    #         detail_price = self.driver.find_element_by_xpath("(.//div[@class='sames']//label[@id='totalfee'])").text
-    #         print("详情页价格", detail_price)
-    #
-    #         self.apply_now()
-    #         case_name, case_number, case_price, totalprice = self.commit_order()
-    #         # return windows, [case_name, case_number, detail_price, case_price, totalprice]
-    #
-    #         all_info = [case_name, case_number, detail_price, case_price, totalprice]
-    #         self.row = self.row + 1
-    #         time.sleep(0.5)
-    #         pay_totalprice = self.pay(windows)
-    #         all_info.append(pay_totalprice)
-    #         print(all_info, pay_totalprice)
-    #         if float(all_info[2]) == float(all_info[3]) and float(all_info[2]) == float(pay_totalprice) and \
-    #                 float(all_info[4]) == float(all_info[2]):
-    #             status = 'True'
-    #         else:
-    #             status = "False"
-    #         all_info.append(status)
-    #         self.excel_number(all_info)
-    #         time.sleep(1)
-    #         self.driver.back()
-    #         self.driver.back()
-    #         self.driver.back()
-    #         self.closed_windows(1)
-    #     self.closed_windows(0)
+        path = self.screen_path
+        self.driver.save_screenshot(path + self.timetemp +name + ".png")
+        print("二维码截图成功")
+        self.driver.switch_to_window(current_window)
 
-    # 105 文字作品著作权登记-30日
+    # 计算机软件著作权登记
+    def copyright_computer_software_01(self):
+        all_type = [u'计算机作品著作权登记']
+        type_code = ["computer"]
+        for index, copyright_type in enumerate(all_type):
+            if self.dboperate.exists(type_code[index]):
+                try:
+                    locator = (By.XPATH, "//div[@class='isnav-first']/div[1]/h2")
+                    WebDriverWait(self.driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
+                    aa = self.driver.find_element_by_xpath("(.//div[@class='fl isnaMar'])[3]")
+                    ActionChains(self.driver).move_to_element(aa).perform()
+                    self.driver.find_element_by_link_text(u'计算机软件著作权登记').click()
+                    # 切换至新窗口
+                    self.windows = self.driver.window_handles
+                    self.driver.switch_to_window(self.windows[-1])
+                    # 服务类型：
+                    # 1-6，36个工作日-3个工作日
+                    # 随机选择一个类型
+                    # for num in [random.randint(range(1, 7))]:
+                    for num in range(1, 3):
+                        self.driver.find_element_by_xpath("//ul[@p='232']/li[{}]/a".format(num)).click()
+                        # 数量加减
+                        # self.number_add()
+                        # self.number_minus()
+                        time.sleep(0.5)
+                        while not self.driver.find_element_by_id("totalfee").is_displayed():
+                            time.sleep(0.5)
+                        # 获取详情页 价格
+                        detail_price = self.driver.find_element_by_xpath("(.//div[@class='sames']//label[@id='totalfee'])").text
+                        print("详情页价格", detail_price)
+
+                        self.apply_now()
+                        case_name, case_number, case_price, totalprice = self.commit_order()
+                        all_info = [case_name, case_number, detail_price, case_price, totalprice]
+                        self.row = self.row + 1
+                        time.sleep(0.5)
+                        pay_totalprice = self.pay(self.windows)
+                        all_info.append(pay_totalprice)
+                        print(all_info, pay_totalprice)
+                        if float(all_info[2]) == float(all_info[3]) and float(all_info[2]) == float(pay_totalprice) and \
+                                float(all_info[4]) == float(all_info[2]):
+                            status = 'True'
+                        else:
+                            status = "False"
+                        all_info.append(status)
+                        self.excel_number(all_info)
+                        time.sleep(1)
+                        self.driver.back()
+                        self.driver.back()
+                        self.driver.back()
+                        screen_name = "_".join([case_name, case_number, case_price])
+                        self.qr_shotscreen(screen_name)
+                        self.closed_windows(1)
+                        self.dboperate.del_elem(type_code[index], num)
+                except Exception as e:
+                    print(e)
+                    self.driver.switch_to_window(self.windows[0])
+                self.closed_windows(1)
+        time.sleep(1)
+
+    # 美术作品著作权登记-30日
+    def copyright_art_works_01(self):
+        # 选择美术作品著作权登记
+        all_type = [u'美术作品著作权登记']
+        type_code = ["art"]
+        for index, copyright_type in enumerate(all_type):
+            if self.dboperate.exists(type_code[index]):
+                try:
+                    locator = (By.XPATH, "//div[@class='isnav-first']/div[1]/h2")
+                    WebDriverWait(self.driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
+                    aa = self.driver.find_element_by_xpath("(.//div[@class='fl isnaMar'])[3]")
+                    ActionChains(self.driver).move_to_element(aa).perform()
+                    self.driver.find_element_by_link_text(copyright_type).click()
+                    # 切换至新窗口
+                    self.windows = self.driver.window_handles
+                    self.driver.switch_to_window(self.windows[-1])
+                    # 30个工作日
+                    for num in range(1, 3):
+                        self.driver.find_element_by_xpath("//ul[@p='107538']/li[{}]/a".format(num)).click()
+                        # 数量加减
+                        # self.number_add()
+                        # # self.number_minus()
+                        time.sleep(0.5)
+                        while not self.driver.find_element_by_id("totalfee").is_displayed():
+                            time.sleep(0.5)
+                        # 获取详情页 价格
+                        detail_price = self.driver.find_element_by_xpath("(.//div[@class='sames']//label[@id='totalfee'])").text
+                        print("详情页价格", detail_price)
+
+                        self.apply_now()
+                        case_name, case_number, case_price, totalprice = self.commit_order()
+
+                        all_info = [case_name, case_number, detail_price, case_price, totalprice]
+                        self.row = self.row + 1
+                        time.sleep(0.5)
+
+                        pay_totalprice = self.pay(self.windows)
+                        all_info.append(pay_totalprice)
+                        print(all_info, pay_totalprice)
+                        if float(all_info[2]) == float(all_info[3]) and float(all_info[2]) == float(pay_totalprice) and \
+                                float(all_info[4]) == float(all_info[2]):
+                            status = 'True'
+                        else:
+                            status = "False"
+                        all_info.append(status)
+                        self.excel_number(all_info)
+                        time.sleep(1)
+                        self.driver.back()
+                        self.driver.back()
+                        self.driver.back()
+                        screen_name = "_".join([case_name,case_number,case_price])
+                        self.qr_shotscreen(screen_name)
+                        self.closed_windows(1)
+                        self.dboperate.del_elem(type_code[index], num)
+                except Exception as e:
+                    print(e)
+                    self.driver.switch_to_window(self.windows[0])
+                self.closed_windows(1)
+        time.sleep(1)
+
+    # 文字作品著作权登记-30日
     def copyright_writings_01(self):
         # 选择文字作品著作权登记
         all_type = [u'汇编作品著作权登记', u'文字作品著作权登记', u'摄影作品著作权登记', u'电影作品著作权登记', u'音乐作品著作权登记', u'曲艺作品著作权登记']
-        for copyright_type in all_type:
-            if self.dboperate.is_member(copyright_type):
+        type_code = ["compile", "word", "photography", "film", "music", "drama"]
+        for index, copyright_type in enumerate(all_type):
+            if self.dboperate.exists(type_code[index]):
                 try:
                     locator = (By.XPATH, "//div[@class='isnav-first']/div[1]/h2")
                     WebDriverWait(self.driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
@@ -257,7 +300,7 @@ class Execute(object, metaclass=FunctionName):
                     self.windows = self.driver.window_handles
                     self.driver.switch_to_window(self.windows[-1])
                     # 案件类型：
-                    for num in range(1, 3):
+                    for num in range(1, 2):
                         self.driver.find_element_by_xpath("//ul[@id='ulType']/li[{}]/a".format(num)).click()
                         # 数量加减
                         # self.number_add()
@@ -271,7 +314,6 @@ class Execute(object, metaclass=FunctionName):
 
                         self.apply_now()
                         case_name, case_number, case_price, totalprice = self.commit_order()
-                        # return windows, [case_name, case_number, detail_price, case_price, totalprice]
 
                         all_info = [case_name, case_number, detail_price, case_price, totalprice]
                         self.row = self.row + 1
@@ -291,10 +333,13 @@ class Execute(object, metaclass=FunctionName):
                         self.driver.back()
                         self.driver.back()
                         self.driver.back()
+                        screen_name = "_".join([case_name, case_number, case_price])
+                        self.qr_shotscreen(screen_name)
                         self.closed_windows(1)
+                        self.dboperate.del_elem(type_code[index], num)
                 except Exception as e:
+                    print(e)
                     self.driver.switch_to_window(self.windows[0])
-            self.dboperate.del_elem(copyright_type)
-            self.closed_windows(0)
-            time.sleep(1)
+                self.closed_windows(1)
+        time.sleep(1)
 

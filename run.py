@@ -23,8 +23,8 @@ class Operate:
         # from New_place_order import Execute
         # from test_one import Execute
         # from test_point import Execute
-        from trademark import Execute
-        # from copyright import Execute
+        # from trademark import Execute
+        from copyright import Execute
         # self.dboperate.add(ReadConfig().get_trademake_type())
         response = Execute()
 

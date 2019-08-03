@@ -132,14 +132,14 @@ class Execute(object, metaclass=FunctionName):
         print(self.windows)
         n = len(self.windows)
         while n > 1:
-            print('打印windows1', self.windows)
+            print('windows1', self.windows)
             self.driver.switch_to_window(self.windows[-1])
             print("===================1=============")
             self.driver.close()
             del self.windows[-1]
             n -= 1
             self.driver.switch_to_window(self.windows[0])
-            print('打印windows2', self.windows)
+            print('windows2', self.windows)
             print("=====================2=============")
 
     # 存储案件类型，案件号
@@ -175,15 +175,15 @@ class Execute(object, metaclass=FunctionName):
                     self.windows = self.driver.window_handles
                     self.driver.switch_to_window(self.windows[-1])
                     # 双滚动条有问题，底部的无法点击
-                    num = random.randint(1, 30)
-                    # num = 20
+                    # num = random.randint(1, 30)
+                    num = 35
                     print("num", num)
                     time.sleep(1)
                     target = self.driver.find_element_by_xpath(
-                        ".//ul[@class='statuslist']/li[@idx='{}']".format(num))
-                    self.driver.execute_script("arguments[0].scrollIntoView(true);", target)
+                        ".//ul[@class='statuslist']/li[{}]".format(num))
+                    self.driver.execute_script("arguments[0].scrollIntoView();", target)
                     time.sleep(1)
-                    self.driver.find_element_by_xpath(".//ul[@class='statuslist']/li[{}]".format(num)).click()
+                    self.driver.find_element_by_xpath(".//ul[@class='statuslist']/li[{}]".format(45)).click()
 
                     # ActionChains(self.driver).move_to_element(
                     #     self.driver.find_element(By.XPATH, "//ul[@class='statuslist']/li[{}]".format(num))).click()
@@ -337,7 +337,7 @@ class Execute(object, metaclass=FunctionName):
             for num in [1, 2]:
                 try:
                     time.sleep(0.5)
-                    self.driver.find_element_by_xpath(".//ul[@id='ulType']/li[@t='{}']/a".format(num)).click()
+                    self.driver.find_element_by_xpath(".//ul[@id='ulType']/li[{}]".format(num)).click()
                     # 数量加减
                     # self.number_add()
                     # # self.number_minus()
@@ -458,18 +458,6 @@ class Execute(object, metaclass=FunctionName):
                     all_info = [case_name, case_number, detail_price, case_price, totalprice]
                     self.row = self.row + 1
                     time.sleep(0.5)
-                    time.sleep(0.5)
-                    while not self.driver.find_element_by_id("totalfee").is_displayed():
-                        time.sleep(0.5)
-                    # 获取详情页 价格
-                    detail_price = self.driver.find_element_by_xpath("(.//div[@class='sames']//label[@id='totalfee'])").text
-                    print("详情页价格", detail_price)
-
-                    self.apply_now()
-                    case_name, case_number, case_price, totalprice = self.commit_order()
-                    all_info = [case_name, case_number, detail_price, case_price, totalprice]
-                    self.row = self.row + 1
-                    time.sleep(0.5)
                     pay_totalprice = self.pay(self.windows)
                     all_info.append(pay_totalprice)
                     print(all_info, pay_totalprice)
@@ -510,18 +498,7 @@ class Execute(object, metaclass=FunctionName):
                     # 数量加减
                     # self.number_add()
                     # # self.number_minus()
-                    time.sleep(0.5)
-                    while not self.driver.find_element_by_id("totalfee").is_displayed():
-                        time.sleep(0.5)
-                    # 获取详情页 价格
-                    detail_price = self.driver.find_element_by_xpath("(.//div[@class='sames']//label[@id='totalfee'])").text
-                    print("详情页价格", detail_price)
 
-                    self.apply_now()
-                    case_name, case_number, case_price, totalprice = self.commit_order()
-                    all_info = [case_name, case_number, detail_price, case_price, totalprice]
-                    self.row = self.row + 1
-                    time.sleep(0.5)
                     time.sleep(0.5)
                     while not self.driver.find_element_by_id("totalfee").is_displayed():
                         time.sleep(0.5)
@@ -574,18 +551,6 @@ class Execute(object, metaclass=FunctionName):
                     # 数量加减
                     # self.number_add()
                     # # self.number_minus()
-                    time.sleep(0.5)
-                    while not self.driver.find_element_by_id("totalfee").is_displayed():
-                        time.sleep(0.5)
-                    # 获取详情页 价格
-                    detail_price = self.driver.find_element_by_xpath("(.//div[@class='sames']//label[@id='totalfee'])").text
-                    print("详情页价格", detail_price)
-
-                    self.apply_now()
-                    case_name, case_number, case_price, totalprice = self.commit_order()
-                    all_info = [case_name, case_number, detail_price, case_price, totalprice]
-                    self.row = self.row + 1
-                    time.sleep(0.5)
                     time.sleep(0.5)
                     while not self.driver.find_element_by_id("totalfee").is_displayed():
                         time.sleep(0.5)
