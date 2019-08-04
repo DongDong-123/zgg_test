@@ -44,10 +44,6 @@ class DbOperate:
         return conn.scard(key)
 
 
-
-
-
-
 if __name__ == "__main__":
     # trademark_international = [u'美国商标注册', u'日本商标注册', u'韩国商标注册', u'台湾商标注册', u'香港商标注册', u'德国商标注册', u'欧盟商标注册', u'马德里国际商标',
     #                            u'非洲知识产权组织', u'专属顾问注册', u'专属加急注册', u'专属双享注册', u'专属担保注册']
@@ -64,7 +60,8 @@ if __name__ == "__main__":
 
     test = [u'商标驳回复审', u'商标无效', u'商标续展', u'商标许可备案', u'商标异议', u'商标撤销']
     # test = [u'商标撤销', u'商标异议', u'商标许可备案', u'商标续展', u'商标许可备案']
-    # res.add(trademark_db, test)
+
+    # res.add(trademark_db, patent_common)
     # res.add(u'美国商标注册')
     # res.add(u'专属顾问注册')
     # print(DbOperate().del_elem(u'美国商标注册'))
@@ -85,6 +82,28 @@ if __name__ == "__main__":
 
     # 版权
     keys = ["computer", "art", "word", "compile", "photography", "music", "drama", "film"]
-    values = [1, 2, 3, 4, 5, 6, 7]
-    for key in keys:
-        pp = res.push(key, values)
+    values_7 = [1, 2, 3, 4, 5, 6, 7]
+    # for key in keys:
+    #     pp = res.push(key, values_7)
+
+    keys_3 = ["patent_recheck", "patent_answer","patent_warrant", "patent_stable"]
+    keys_2 = ["patent_evaluate", "patent_clue", "patent_public"]
+    keys_7 = ["patent", "utility", "oneday"]
+    keys_6 = ["design"]
+    patent_common = [u'PCT国际申请', u'电商侵权处理', u'专利权恢复', u'代缴专利年费', u'专利实施许可备案', u'专利质押备案', u'集成电路布图设计']
+    # res.add(trademark_db, patent_common)
+    description_key = [[1, 2, 3], [1, 2], [1, 3], [2, 3], [1], [2], [3]]
+
+    # for key in keys_3:
+    #     res.push(key, [num for num in range(1, 4)])
+    #
+    # for key in keys_2:
+    #     res.push(key, [num for num in range(1, 3)])
+    #
+    # for key in keys_6:
+    #     res.push(key, [num for num in range(1, 7)])
+    #
+    for key in keys_7:
+        res.push(key, [num for num in range(1, 8)])
+
+    # res.push("description", description_key)
