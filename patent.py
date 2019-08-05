@@ -57,11 +57,7 @@ class Execute(object, metaclass=FunctionName):
         self.workbook = xlwt.Workbook(encoding='utf-8')
         self.booksheet = self.workbook.add_sheet('Sheet1')
         self.timetemp = time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime())  # 存储Excel表格文件名编号
-        # 每个案件的数量
-        self.number = 1
-        self.report_path = ReadConfig().save_report()
-        self.case_count = FunctionName.get_count
-        self.excel_number(("案件名称", "案件号", "详情页价格", "下单页价格", "下单页总价格", "支付页总价格", "价格状态"))
+
         self.db = "case"
         self.windows = None
         self.dboperate = DbOperate()
