@@ -6,12 +6,10 @@ import xlwt
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 
-from front_login import *
 from readConfig import ReadConfig
-from copy import deepcopy
 from db import DbOperate
 from Common import Common
-
+from front_login import *
 
 class FunctionName(type):
     def __new__(cls, name, bases, attrs, *args, **kwargs):

@@ -10,7 +10,7 @@ from front_login import *
 from readConfig import ReadConfig
 from copy import deepcopy
 from db import DbOperate
-
+from Common import Common
 
 class FunctionName(type):
     def __new__(cls, name, bases, attrs, *args, **kwargs):
@@ -46,12 +46,9 @@ class FunctionName(type):
 
 class Execute(object, metaclass=FunctionName):
     def __init__(self):
-        # 读取配置文件中的 账号密码
-        self.USER = ReadConfig().get_user()
-        self.PASSWORD = ReadConfig().get_password()
+        self.common = Common()
         # 登录
-        self.driver = front_login(self.USER, self.PASSWORD)
-        # self.driver = deepcopy(self.driver)
+        self.driver = self.common.driver
         # Excel写入
         self.row = 0
         self.workbook = xlwt.Workbook(encoding='utf-8')
@@ -65,6 +62,7 @@ class Execute(object, metaclass=FunctionName):
         self.dboperate = DbOperate()
         self.windows = None
         self.db = "case"
+
 
     # 增加案件数量
     def number_add(self):

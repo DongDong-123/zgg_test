@@ -28,6 +28,7 @@ class Execute(object):
 
     # 删除未支付订单
     def delete_order(self):
+
         self.driver.get("{}/user/casemanage.html?state=1".format(ReadConfig().get_user_url()))
         locator = (By.LINK_TEXT, u'删除')
         # 等待页面加载完毕
@@ -44,17 +45,19 @@ class Execute(object):
         self.driver.find_element_by_link_text(u"删除").click()
         self.driver.find_element_by_link_text(u"确定").click()
         # 必须等一会，才能获取弹框
-        sleep(0.5)
-        # 关闭弹框
-        aler = self.driver.switch_to.alert
-        delete_staus = aler.text
-        print('delete_staus', delete_staus)
-        aler.accept()
-        # 存储
-        self.row = self.row + 1
-        self.save_delete_case((order_number, case_name, case_number, delete_staus))
-
-        # self.driver.refresh()  # 刷新页面
+        sleep(1)
+        try:
+            # 关闭弹框
+            aler = self.driver.switch_to.alert
+            delete_staus = aler.text
+            print('delete_staus', delete_staus)
+            aler.accept()
+            # 存储
+            self.row = self.row + 1
+            self.save_delete_case((order_number, case_name, case_number, delete_staus))
+        except Exception as e:
+            print(e)
+            self.driver.refresh()  # 刷新页面
 
     # 储存删除记录，同一订单多个案件，只存储第一个
     def save_delete_case(self, infos):

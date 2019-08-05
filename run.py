@@ -2,7 +2,7 @@
 
 # test
 # from copyright import Execute
-from test_patent import Execute
+# from test_patent import Execute
 # from test_trademarkt import Execute
 # from test_one import Execute
 #
@@ -25,7 +25,7 @@ class Operate:
         # from test_point import Execute
         # from trademark import Execute
         from copyright import Execute
-        # self.dboperate.add(ReadConfig().get_trademake_type())
+        # from patent import Execute
         response = Execute()
 
         for callback_label in range(response.__FuncCount__):
@@ -98,6 +98,6 @@ def send_clue():
 
 
 if __name__ == '__main__':
-    run()
+    # run()
     # send_clue()
-    # delete()
+    delete()

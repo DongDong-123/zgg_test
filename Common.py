@@ -94,15 +94,22 @@ class Common(object):
         return self.process_price(pay_totalprice)
 
     # 关闭窗口
+    # def closed_windows(self, num):
+    #     self.windows = self.driver.window_handles
+    #     self.driver.switch_to_window(self.windows[-1])
+    #     self.driver.close()
+    #     self.windows = self.driver.window_handles
+    #     if len(self.windows) > 1:
+    #         self.driver.switch_to_window(self.windows[num])
+    #     else:
+    #         self.driver.switch_to_window(self.windows[0])
     def closed_windows(self, num):
         self.windows = self.driver.window_handles
-        self.driver.switch_to_window(self.windows[-1])
-        self.driver.close()
+        for n in range(num + 1, len(self.windows)):
+            self.driver.switch_to_window(self.windows[n])
+            self.driver.close()
         self.windows = self.driver.window_handles
-        if len(self.windows) > 1:
-            self.driver.switch_to_window(self.windows[num])
-        else:
-            self.driver.switch_to_window(self.windows[0])
+        self.driver.switch_to_window(self.windows[num])
 
     # 存储案件类型，案件号
     def excel_number(self, infos):
