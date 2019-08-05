@@ -24,7 +24,6 @@ class Execute(object, metaclass=FunctionName):
     def __init__(self):
         self.common = Common()
         self.timetemp = time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime())  # 存储Excel表格文件名编号
-        # 每个案件的数量
         self.db = "case"
         self.dboperate = DbOperate()
 
