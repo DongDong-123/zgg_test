@@ -366,7 +366,6 @@ class Execute(object, metaclass=FunctionName):
                     self.driver.back()
                     self.driver.back()
                     self.driver.back()
-                    self.closed_windows()
                 except Exception as e:
                     print(e)
                     self.driver.switch_to_window(self.windows[1])
