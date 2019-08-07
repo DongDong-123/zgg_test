@@ -24,8 +24,6 @@ class Execute(object, metaclass=FunctionName):
     def __init__(self):
         self.common = Common()
         self.timetemp = time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime())  # 存储Excel表格文件名编号
-        # 每个案件的数量
-        self.number = 1
         self.dboperate = DbOperate()
         self.db = "copyright"
 
@@ -50,7 +48,7 @@ class Execute(object, metaclass=FunctionName):
                     WebDriverWait(self.common.driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
                     aa = self.common.driver.find_element_by_xpath("(.//div[@class='fl isnaMar'])[3]")
                     ActionChains(self.common.driver).move_to_element(aa).perform()
-                    self.common.driver.find_element_by_link_text(u'计算机软件著作权登记').click()
+                    self.common.driver.find_element_by_link_text(copyright_type).click()
                     # 切换至新窗口
                     self.common.windows = self.common.driver.window_handles
                     self.common.driver.switch_to_window(self.common.windows[-1])
