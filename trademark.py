@@ -183,22 +183,18 @@ class Execute(object, metaclass=FunctionName):
                     time.sleep(1)
                     self.driver.find_element_by_xpath(".//ul[@class='statuslist']/li[{}]".format(45)).click()
 
-                    # ActionChains(self.driver).move_to_element(
-                    #     self.driver.find_element(By.XPATH, "//ul[@class='statuslist']/li[{}]".format(num))).click()
                     time.sleep(0.5)
                     while not self.driver.find_element_by_id("costesNum").is_displayed():
                         time.sleep(0.5)
                     # 获取详情页 价格
                     # detail_price = self.driver.find_element_by_xpath("(.//div[@class='info-checkedtop']/p/span)").text
                     detail_price = self.driver.find_element_by_xpath("(.//div[@class='bottomin']/p[1]/span)").text
-                    # print("商标页价格", total_price)
                     detail_price = self.process_price(detail_price)
 
                     print("详情页价格", detail_price)
                     self.driver.find_element_by_xpath(".//div[@id='bottombg']/div/span").click()
 
                     case_name, case_number, case_price, totalprice = self.commit_order()
-                    # return windows, [case_name, case_number, detail_price, case_price, totalprice]
                     all_info = [case_name, case_number, detail_price, case_price, totalprice]
                     self.row = self.row + 1
                     time.sleep(0.5)
@@ -226,7 +222,6 @@ class Execute(object, metaclass=FunctionName):
                     u'欧盟商标注册', u'马德里国际商标', u'非洲知识产权组织']
         for international_type in all_type:
             if self.dboperate.is_member(self.db, international_type):
-                # print(self.dboperate.is_member(international_type))
                 try:
                     locator = (By.XPATH, ".//div[@class='isnav-first']/div[1]/h2")
                     WebDriverWait(self.driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
@@ -252,7 +247,6 @@ class Execute(object, metaclass=FunctionName):
 
                     self.apply_now()
                     case_name, case_number, case_price, totalprice = self.commit_order()
-                    # return windows, [case_name, case_number, detail_price, case_price, totalprice]
                     all_info = [case_name, case_number, detail_price, case_price, totalprice]
                     self.row = self.row + 1
                     time.sleep(0.5)
@@ -348,7 +342,6 @@ class Execute(object, metaclass=FunctionName):
 
                     self.apply_now()
                     case_name, case_number, case_price, totalprice = self.commit_order()
-                    # return windows, [case_name, case_number, detail_price, case_price, totalprice]
                     all_info = [case_name, case_number, detail_price, case_price, totalprice]
                     self.row = self.row + 1
                     time.sleep(0.5)
