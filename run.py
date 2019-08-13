@@ -1,13 +1,3 @@
-
-
-# test
-# from copyright import Execute
-# from test_patent import Execute
-# from test_trademarkt import Execute
-# from test_one import Execute
-#
-# from test_clue import Execute
-
 import os
 import time
 from readConfig import ReadConfig
@@ -48,8 +38,8 @@ class Operate:
             f.read()
 
     def send_clue(self):
-        # from send_clue import Execute
-        from test_clue import Execute
+        from send_clue import Execute
+        # from test_clue import Execute
 
         response = Execute()
         for callback_label in range(response.__FuncCount__):
@@ -59,7 +49,6 @@ class Operate:
             self.execute_log(callback, "send_clue")
             time.sleep(1)
             print("{}发送完毕".format(callback))
-            time.sleep(5)
 
 # 删除
 def delete():
@@ -75,7 +64,7 @@ def delete():
 def random_list(num, lis):
     res = []
     for num in range(num):
-        index = random.randint(34)
+        index = random.randint(1, 34)
         res.append(lis[index])
     return res
 
@@ -87,11 +76,13 @@ def run():
 
 
 def send_clue():
-    all_type = ReadConfig().get_clue_type()
-    # 随机数量
-    num = 5
-    all_type = random_list(num, all_type)
-    DbOperate().add("clue", all_type)
+    # ====================================
+    # all_type = ReadConfig().get_clue_type()
+    # # 随机数量
+    # num = 5
+    # all_type = random_list(num, all_type)
+    # DbOperate().add("clue", all_type)
+    # =================================
     qq = Operate()
     qq.send_clue()
     print("线索发送完毕")
@@ -99,5 +90,6 @@ def send_clue():
 
 if __name__ == '__main__':
     # run()
-    # send_clue()
-    delete()
+
+    send_clue()
+    # delete()
