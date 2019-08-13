@@ -60,7 +60,6 @@ def patent(res):
 
     for key in keys_2:
         res.push(key, [num for num in range(1, 3)])
-<<<<<<< HEAD
 
     for key in keys_6:
         res.push(key, [num for num in range(1, 7)])
@@ -71,18 +70,6 @@ def patent(res):
     res.push("description", description_key)
 
 
-=======
-
-    for key in keys_6:
-        res.push(key, [num for num in range(1, 7)])
-
-    for key in keys_7:
-        res.push(key, [num for num in range(1, 8)])
-
-    res.push("description", description_key)
-
-
->>>>>>> daf15ca... 更改状态，不重要
 def copyright(res):
     # 版权
     keys = ["computer", "art", "word", "compile", "photography", "music", "drama", "film"]
@@ -136,4 +123,5 @@ if __name__ == "__main__":
     # 版权
     # copyright(res)
 
+    # 线索
     clue(res)
