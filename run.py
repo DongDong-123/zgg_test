@@ -90,6 +90,5 @@ def send_clue():
 
 if __name__ == '__main__':
     # run()
-
     send_clue()
     # delete()
