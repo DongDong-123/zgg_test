@@ -7,12 +7,12 @@ from readConfig import ReadConfig
 
 
 def front_login(username, password):
-    # from selenium.webdriver.chrome.options import Options
-    # chrome_options = Options()
-    # chrome_options.add_argument('--headless')
-    # driver = webdriver.Chrome(chrome_options=chrome_options)
+    from selenium.webdriver.chrome.options import Options
+    chrome_options = Options()
+    chrome_options.add_argument('--headless')
+    driver = webdriver.Chrome(chrome_options=chrome_options)
 
-    driver = webdriver.Chrome()
+    # driver = webdriver.Chrome()
 
     driver.maximize_window()
     driver.get(ReadConfig().get_root_url())
