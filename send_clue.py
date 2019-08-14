@@ -57,9 +57,9 @@ class Execute(object, metaclass=FunctionName):
         self.file_name = self.save_clue_log(("手机号", "线索内容", "发送状态", "其他"))
         self.db = "clue"
         self.dboperate = DbOperate()
-        self.wait = 0
-        self.wait_time = 0
-        self.add_clue = 0
+        self.wait = 1
+        self.wait_time = 3
+        self.add_clue = 1
 
     def execute_function(self, callback):
         try:
@@ -72,7 +72,7 @@ class Execute(object, metaclass=FunctionName):
             time.sleep(0.5)
             self.write_error_log(str(e))
 
-    def phone(self):
+    def make_phone(self):
         begin = 16619923387
         end = 16619933387
         return random.choice([num for num in range(begin, end)])
@@ -132,8 +132,7 @@ class Execute(object, metaclass=FunctionName):
                     # 输入联系方式/联系人
                     case_name = self.driver.find_element_by_xpath("(.//div[@class='ui-apply-tit']/h3)").text
                     if self.add_clue:
-                        self.driver.find_element_by_id("consult_phone").send_keys(self.phone())
-                    else:
+                        self.phone = self.make_phone()
                         self.driver.find_element_by_id("consult_phone").send_keys(self.phone)
                     self.driver.find_element_by_id("consult_contact").send_keys(case_name)
 
@@ -148,14 +147,14 @@ class Execute(object, metaclass=FunctionName):
                     self.dboperate.del_elem(self.db, clue_type)
 
                     self.driver.switch_to.window(windows[0])
-                    back_parm = (self.phone(), case_name, res)
+                    back_parm = (self.phone, case_name, res)
                     self.row = self.row + 1
                     self.save_clue_log(back_parm)
                     if self.wait:
                         print("休息{}s...".format(self.wait_time))
                         time.sleep(self.wait_time)
                 except Exception as e:
-                    print(e)
+                    print("发送错误：", e)
                     windows = self.driver.window_handles
                     self.driver.switch_to.window(windows[0])
 
@@ -185,8 +184,7 @@ class Execute(object, metaclass=FunctionName):
                     # 输入联系方式/联系人
                     case_name = self.driver.find_element_by_xpath("(.//div[@class='ui-apply-tit']//h3)").text
                     if self.add_clue:
-                        self.driver.find_element_by_id("consult_phone").send_keys(self.phone())
-                    else:
+                        self.phone = self.make_phone()
                         self.driver.find_element_by_id("consult_phone").send_keys(self.phone)
                     self.driver.find_element_by_id("consult_contact").send_keys(case_name + "-" + case_type)
 
@@ -199,14 +197,14 @@ class Execute(object, metaclass=FunctionName):
                     self.driver.close()
                     self.driver.switch_to.window(windows[0])
                     self.dboperate.del_elem(self.db, clue_type)
-                    back_parm = (self.phone(), case_name, res)
+                    back_parm = (self.phone, case_name, res)
                     self.row = self.row + 1
                     self.save_clue_log(back_parm)
                     if self.wait:
                         print("休息{}s...".format(self.wait_time))
                         time.sleep(self.wait_time)
                 except Exception as e:
-                    print(e)
+                    print("发送错误：", e)
                     windows = self.driver.window_handles
                     self.driver.switch_to.window(windows[0])
 
@@ -238,8 +236,7 @@ class Execute(object, metaclass=FunctionName):
                     # 输入联系方式/联系人
                     case_name = self.driver.find_element_by_xpath("(.//div[@class='ui-apply-tit']//h3)").text
                     if self.add_clue:
-                        self.driver.find_element_by_id("consult_phone").send_keys(self.phone())
-                    else:
+                        self.phone = self.make_phone()
                         self.driver.find_element_by_id("consult_phone").send_keys(self.phone)
                     self.driver.find_element_by_id("consult_contact").send_keys(case_name + "-" + case_type)
 
@@ -253,14 +250,14 @@ class Execute(object, metaclass=FunctionName):
                     self.driver.switch_to.window(windows[0])
 
                     self.dboperate.del_elem(self.db, clue_type)
-                    back_parm = (self.phone(), case_name, res)
+                    back_parm = (self.phone, case_name, res)
                     self.row = self.row + 1
                     self.save_clue_log(back_parm)
                     if self.wait:
                         print("休息{}s...".format(self.wait_time))
                         time.sleep(self.wait_time)
             except Exception as e:
-                print(e)
+                print("发送错误：", e)
                 windows = self.driver.window_handles
                 self.driver.switch_to.window(windows[0])
 
@@ -288,8 +285,7 @@ class Execute(object, metaclass=FunctionName):
                 # 输入联系方式/联系人
                 case_name = self.driver.find_element_by_xpath("(.//div[@class='ui-apply-tit']//h3)").text
                 if self.add_clue:
-                    self.driver.find_element_by_id("consult_phone").send_keys(self.phone())
-                else:
+                    self.phone = self.make_phone()
                     self.driver.find_element_by_id("consult_phone").send_keys(self.phone)
                 self.driver.find_element_by_id("consult_contact").send_keys(case_name)
 
@@ -302,14 +298,14 @@ class Execute(object, metaclass=FunctionName):
                 self.driver.close()
                 self.driver.switch_to.window(windows[0])
                 self.dboperate.del_elem(self.db, clue_type)
-                back_parm = (self.phone(), case_name, res)
+                back_parm = (self.phone, case_name, res)
                 self.row = self.row + 1
                 self.save_clue_log(back_parm)
                 if self.wait:
                     print("休息{}s...".format(self.wait_time))
                     time.sleep(self.wait_time)
             except Exception as e:
-                print(e)
+                print("发送错误：", e)
                 windows = self.driver.window_handles
                 self.driver.switch_to.window(windows[0])
 
@@ -346,8 +342,7 @@ class Execute(object, metaclass=FunctionName):
                 # 输入联系方式/联系人
                 case_name = self.driver.find_element_by_xpath("(.//div[@class='ui-apply-tit']//h3)").text
                 if self.add_clue:
-                    self.driver.find_element_by_id("consult_phone").send_keys(self.phone())
-                else:
+                    self.phone = self.make_phone()
                     self.driver.find_element_by_id("consult_phone").send_keys(self.phone)
                 self.driver.find_element_by_id("consult_contact").send_keys(case_name + "-" + nation + "-" + name)
 
@@ -360,14 +355,14 @@ class Execute(object, metaclass=FunctionName):
                 self.driver.close()
                 self.driver.switch_to.window(windows[0])
                 self.dboperate.del_elem(self.db, clue_type)
-                back_parm = (self.phone(), case_name, res)
+                back_parm = (self.phone, case_name, res)
                 self.row = self.row + 1
                 self.save_clue_log(back_parm)
                 if self.wait:
                     print("休息{}s...".format(self.wait_time))
                     time.sleep(self.wait_time)
             except Exception as e:
-                print(e)
+                print("发送错误：", e)
                 windows = self.driver.window_handles
                 self.driver.switch_to.window(windows[0])
 
@@ -388,8 +383,8 @@ class Execute(object, metaclass=FunctionName):
                 # 输入联系方式/联系人
                 case_name = self.driver.find_element_by_xpath("(.//div[@class='ui-apply-tit']/h3)").text
                 if self.add_clue:
-                    self.driver.find_element_by_id("consult_phone").send_keys(self.phone())
-                else:
+                    self.phone = self.make_phone()
+
                     self.driver.find_element_by_id("consult_phone").send_keys(self.phone)
                 self.driver.find_element_by_id("consult_contact").send_keys(case_name)
 
@@ -403,14 +398,14 @@ class Execute(object, metaclass=FunctionName):
                 self.driver.switch_to.window(windows[0])
 
                 self.dboperate.del_elem(self.db, clue_type)
-                back_parm = (self.phone(), case_name, res)
+                back_parm = (self.phone, case_name, res)
                 self.row = self.row + 1
                 self.save_clue_log(back_parm)
                 if self.wait:
                     print("休息{}s...".format(self.wait_time))
                     time.sleep(self.wait_time)
             except Exception as e:
-                print(e)
+                print("发送错误：", e)
                 windows = self.driver.window_handles
                 self.driver.switch_to.window(windows[0])
 
@@ -434,8 +429,7 @@ class Execute(object, metaclass=FunctionName):
                     # 输入联系方式/联系人
                     case_name = self.driver.find_element_by_xpath("(.//div[@class='ui-apply-tit']/h3)").text
                     if self.add_clue:
-                        self.driver.find_element_by_id("consult_phone").send_keys(self.phone())
-                    else:
+                        self.phone = self.make_phone()
                         self.driver.find_element_by_id("consult_phone").send_keys(self.phone)
                     self.driver.find_element_by_id("consult_contact").send_keys(case_name)
 
@@ -448,14 +442,14 @@ class Execute(object, metaclass=FunctionName):
                     self.driver.close()
                     self.driver.switch_to.window(windows[0])
                     self.dboperate.del_elem(self.db, clue_type)
-                    back_parm = (self.phone(), case_name, res)
+                    back_parm = (self.phone, case_name, res)
                     self.row = self.row + 1
                     self.save_clue_log(back_parm)
                     if self.wait:
                         print("休息{}s...".format(self.wait_time))
                         time.sleep(self.wait_time)
                 except Exception as e:
-                    print(e)
+                    print("发送错误：", e)
                     windows = self.driver.window_handles
                     self.driver.switch_to.window(windows[0])
 
@@ -489,8 +483,7 @@ class Execute(object, metaclass=FunctionName):
                     # 输入联系方式/联系人
                     case_name = self.driver.find_element_by_xpath("(.//div[@class='ui-apply-tit']//h3)").text
                     if self.add_clue:
-                        self.driver.find_element_by_id("consult_phone").send_keys(self.phone())
-                    else:
+                        self.phone = self.make_phone()
                         self.driver.find_element_by_id("consult_phone").send_keys(self.phone)
                     self.driver.find_element_by_id("yourname").send_keys(case_name + text + "-" + price)
 
@@ -504,14 +497,14 @@ class Execute(object, metaclass=FunctionName):
                     self.driver.close()
                     self.driver.switch_to.window(windows[0])
                     self.dboperate.del_elem(self.db, clue_type)
-                    back_parm = (self.phone(), case_name, res, text, price)
+                    back_parm = (self.phone, case_name, res, text, price)
                     self.row = self.row + 1
                     self.save_clue_log(back_parm)
                     if self.wait:
                         print("休息{}s...".format(self.wait_time))
                         time.sleep(self.wait_time)
                 except Exception as e:
-                    print(e)
+                    print("发送错误：", e)
                     windows = self.driver.window_handles
                     self.driver.switch_to.window(windows[0])
 
@@ -528,8 +521,9 @@ if __name__ == "__main__":
     clue_5 = [u'双软认证',  u'咨询分析报告', u'知识产权运营', u'知识产权顾问']
     clue_5_1 = [u'软件开发']
 
-    all_clue_type = clue_1_1 + clue_1_2 + clue_1_3 + clue_1_4+clue_2+clue_5+clue_5_1
+    # all_clue_type = clue_1_1 + clue_1_2 + clue_1_3 + clue_1_4+clue_2+clue_5+clue_5_1
+    all_clue_type = clue_1_3
     res.add(clue_db, all_clue_type)
     qq = Execute()
-    qq.patent_clue_1_1()
-    qq.patent_clue_1_2()
+    qq.patent_clue_1_3()
+    # qq.patent_clue_1_2()
