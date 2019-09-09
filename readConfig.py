@@ -37,6 +37,10 @@ class ReadConfig:
     def get_trademake_type(self):
         return self.cfg.get("TRADEMARK", "trademark_international")
 
+    def login_page(self):
+        return self.cfg.get("URL", "LOGIN_PAGE")
+
+
     def get_clue_type(self):
         clue_1_1 = self.cfg.get("CLUE", "clue_1_1")
         clue_1_2 = self.cfg.get("CLUE", "clue_1_2")

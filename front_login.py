@@ -15,12 +15,9 @@ def front_login(username, password):
     # driver = webdriver.Chrome()
 
     driver.maximize_window()
-    driver.get(ReadConfig().get_root_url())
-    # 等待页面加载完成
-    locator = (By.LINK_TEXT, u'立即登录')
-    WebDriverWait(driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
-    # 进入登录页面
-    driver.find_element_by_link_text(u"立即登录").click()
+
+    driver.get(ReadConfig().login_page())
+
     locator = (By.LINK_TEXT, '密码登录')
     WebDriverWait(driver, 10, 0.5).until(EC.presence_of_element_located(locator))
     driver.find_element_by_link_text(u'密码登录').click()
